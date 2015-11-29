@@ -1,0 +1,28 @@
+{
+  "name": "sync-server",
+  "version": "0.0.1",
+  "private": true,
+  "bugs": "https://github.com/nponiros/sync_server/issues",
+  "license": "MIT",
+  "author": "Nikolas Poniros <nikolas@poniros.de>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nponiros/sync_server.git"
+  },
+  "dependencies": {
+    "body-parser": "1.14.1",
+    "express": "4.13.3",
+    "nedb": "1.2.1"
+  },
+  "devDependencies": {
+    "gulp": "3.9.0",
+    "gulp-eslint": "1.0.0",
+    "gulp-load-plugins": "1.0.0"
+  },
+  "scripts": {
+    "start": "node --use-strict main.js"
+  },
+  "engines": {
+    "node" : ">=5.0.0"
+  }
+}
