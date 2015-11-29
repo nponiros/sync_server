@@ -1,7 +1,6 @@
 {
   "name": "sync-server",
   "version": "0.0.1",
-  "private": true,
   "bugs": "https://github.com/nponiros/sync_server/issues",
   "license": "MIT",
   "author": "Nikolas Poniros <nikolas@poniros.de>",
