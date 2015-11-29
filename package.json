@@ -24,5 +24,9 @@
   },
   "engines": {
     "node" : ">=5.0.0"
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "sync-server": "./bin/main.js"
   }
 }
