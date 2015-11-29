@@ -126,7 +126,7 @@
     space-infix-ops: 1              # require spaces around operators
     space-return-throw-case: 1      # require a space after return, throw, and case
     space-unary-ops: 1              # require or disallow spaces before/after unary operators
-    strict: [2, "global"]
+    strict: [0, "global"]
     # ECMAScript 6
     arrow-parens: 1         # require parens in arrow function arguments
     arrow-spacing: 1        # require space before/after arrow function's arrow
