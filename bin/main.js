@@ -2,7 +2,7 @@
 
 'use strict';
 
+const settings = require('../lib/settings.js');
 const server = require('../lib/server.js');
-const port = 3000;
 
-server.start(port);
+server.start(settings);
