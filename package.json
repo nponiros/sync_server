@@ -16,13 +16,17 @@
   "devDependencies": {
     "gulp": "3.9.0",
     "gulp-eslint": "1.0.0",
-    "gulp-load-plugins": "1.0.0"
+    "gulp-load-plugins": "1.0.0",
+    "hippie": "0.4.0",
+    "mocha": "2.3.4"
   },
   "scripts": {
-    "start": "node ./bin/main.js"
+    "start": "node ./bin/main.js",
+    "pretest": "node ./test/test_server start &",
+    "test": "mocha --reporter spec test/integration; node ./test/test_server stop"
   },
   "engines": {
-    "node" : ">=5.0.0"
+    "node": ">=5.0.0"
   },
   "preferGlobal": "true",
   "bin": {
