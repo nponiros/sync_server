@@ -1,25 +1,26 @@
 'use strict';
 
-const hippie = require('hippie');
+const chakram = require('chakram');
+const expect = chakram.expect;
 
 const settings = require('../test_settings');
-const url = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
+const baseUrl = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
 const apiPath = '/api/v1/check';
 
 describe(apiPath, () => {
-  it('should respond with a status of 200', (done) => {
-    hippie()
-      .base(url)
-      .head(apiPath)
-      .expectStatus(200)
-      .end(done);
+  before(() => {
+    chakram.setRequestDefaults({
+      baseUrl
+    });
   });
 
-  it('should respond with an empty body', (done) => {
-    hippie()
-      .base(url)
-      .head(apiPath)
-      .expectBody('')
-      .end(done);
+  it('should respond with a status of 200', () => {
+    const response = chakram.head(apiPath);
+    return expect(response).to.have.status(200);
+  });
+
+  it('should respond with an empty body', () => {
+    const response = chakram.head(apiPath);
+    return expect(response.body).to.be.undefined;
   });
 });

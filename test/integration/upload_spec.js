@@ -1,46 +1,42 @@
 'use strict';
 
-const hippie = require('hippie');
+const chakram = require('chakram');
+const expect = chakram.expect;
 
 const settings = require('../test_settings');
-const url = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
+const baseUrl = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
 const apiPath = '/api/v1/upload';
 
 describe('/upload', () => {
-
-  it('should respond with a status of 200', (done) => {
-    hippie()
-      .json()
-      .base(url)
-      .post(apiPath)
-      .expectStatus(200)
-      .send({changes: []})
-      .end(done);
+  before(() => {
+    chakram.setRequestDefaults({
+      baseUrl
+    });
   });
 
-  it('should respond with a lastUpdateTS and empty changeIds if we send no changes', (done) => {
-    hippie()
-      .json()
-      .base(url)
-      .post(apiPath)
-      .expectStatus(200)
-      .expect((res, body, next) => {
-        const lastUpdateTS = body.lastUpdateTS;
-        if (lastUpdateTS !== undefined && typeof lastUpdateTS === 'number') {
-          if (Array.isArray(body.changeIds) && body.changeIds.length === 0) {
-            next();
-          } else {
-            next(Error('Invalid changeIds length'));
-          }
-        } else {
-          next(Error('Invalid lastUpdateTS'))
+  it('should respond with a status of 200', () => {
+    const response = chakram.post(apiPath, {changes: []});
+    return expect(response).to.have.status(200);
+  });
+
+  it('should respond with a lastUpdateTS and empty changeIds if we send no changes', () => {
+    const response = chakram.post(apiPath, {changes: []});
+    expect(response).to.have.schema({
+      type: 'object',
+      properties: {
+        lastUpdateTS: {
+          type: 'number'
+        },
+        changeIds: {
+          type: 'array'
         }
-      })
-      .send({changes: []})
-      .end(done);
+      }
+    });
+    expect(response).to.have.json('changeIds', []);
+    return chakram.wait();
   });
 
-  it('should respond with a lastUpdateTS and changeIds depending on the changes we send', (done) => {
+  it('should respond with a lastUpdateTS and changeIds depending on the changes we send', () => {
     const updateObj = {
       operation: 'update',
       changeSet: {
@@ -55,29 +51,20 @@ describe('/upload', () => {
       _id: 2
     };
     const changes = [updateObj, deleteObj];
-    hippie()
-      .json()
-      .base(url)
-      .post(apiPath)
-      .expectStatus(200)
-      .expect((res, body, next) => {
-        const lastUpdateTS = body.lastUpdateTS;
-        if (lastUpdateTS !== undefined && typeof lastUpdateTS === 'number') {
-          if (Array.isArray(body.changeIds) && body.changeIds.length === 2) {
-            if (body.changeIds[0] === updateObj._id && body.changeIds[1] === deleteObj._id) {
-              next();
-            } else {
-              next(Error('Wrong changeIds'));
-            }
-          } else {
-            next(Error('Invalid changeIds length'));
-          }
-        } else {
-          next(Error('Invalid lastUpdateTS'))
+    const response = chakram.post(apiPath, {changes});
+    expect(response).to.have.schema({
+      type: 'object',
+      properties: {
+        lastUpdateTS: {
+          type: 'number'
+        },
+        changeIds: {
+          type: 'array'
         }
-      })
-      .send({changes})
-      .end(done);
+      }
+    });
+    expect(response).to.have.json('changeIds', [1, 2]);
+    return chakram.wait();
   });
 
   it('should save the change objects in the data base');
