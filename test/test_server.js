@@ -4,9 +4,9 @@ const fs = require('fs');
 
 const pidFile = '/tmp/sync_server.pid';
 const action = process.argv[2];
+const settings = require('./test_settings.js');
 
 if (action === 'start') {
-  const settings = require('./test_settings.js');
   const server = require('../lib/server.js');
 
   fs.writeFileSync(pidFile, process.pid);
@@ -15,7 +15,9 @@ if (action === 'start') {
 } else if (action === 'stop') {
   const pid = fs.readFileSync(pidFile);
   process.kill(Number(pid));
-  fs.unlink(pidFile);
+  fs.unlinkSync(pidFile);
+  fs.unlinkSync(`${settings.dataPath}/test_collection.db`);
+  fs.rmdirSync(settings.dataPath);
 } else {
   throw Error('Action not supported!');
 }
