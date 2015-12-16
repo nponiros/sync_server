@@ -65,6 +65,5 @@ Object with:
 ## TODO
 
 * CORS
-* Tests
 * Improve docu
-* Collection names are static -> Change this to define collections via settings
+* Add logging
