@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const dataFolder = `sync_server_${Math.random()}`;
+const dataFolder = `sync_server_test`;
 
 module.exports = {
   apiPath: '/api/v1',
