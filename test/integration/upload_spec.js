@@ -2,6 +2,7 @@
 
 const chakram = require('chakram');
 const expect = chakram.expect;
+const fs = require('fs');
 
 const settings = require('../test_settings');
 const baseUrl = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
@@ -38,32 +39,68 @@ describe('/upload', () => {
       changeSet: {
         _id: 1
       },
-      collectionName: 'test_collection',
+      collectionName: 'upload',
       _id: 1
     };
     const deleteObj = {
       operation: 'delete',
-      collectionName: 'test_collection',
+      collectionName: 'upload',
       _id: 2
     };
     const changes = [updateObj, deleteObj];
     const response = chakram.post(apiPath, {changes});
-    expect(response).to.have.status(200);
-    expect(response).to.have.schema({
-      type: 'object',
-      properties: {
-        lastUpdateTS: {
-          type: 'number'
-        },
-        changeIds: {
-          type: 'array'
+
+    expect(response).to.have.json('changeIds', [1, 2]);
+    return chakram.waitFor([
+      expect(response).to.have.status(200),
+      expect(response).to.have.schema({
+        type: 'object',
+        properties: {
+          lastUpdateTS: {
+            type: 'number'
+          },
+          changeIds: {
+            type: 'array'
+          }
+        }
+      })
+    ]).then(() => {
+      const content = fs.readFileSync(`${settings.dataPath}/upload.db`, {encoding: 'utf8'});
+      const arr = content.split('\n');
+      // Last element is an empty line
+      expect(arr).to.have.length(3);
+      for (let i = 0; i < arr.length - 1; i++) {
+        const obj = JSON.parse(arr[i]);
+        expect(obj.lastUpdateTS).to.not.be.undefined;
+        expect(obj.operation).to.not.be.undefined;
+        expect(obj._id).to.not.be.undefined;
+        expect(obj.collectionName).to.be.equal('upload');
+        if (obj.operation === 'update') {
+          expect(obj.changeSet).to.deep.equal(updateObj.changeSet);
+        } else {
+          expect(obj.changeSet).to.be.undefined;
         }
       }
     });
-    expect(response).to.have.json('changeIds', [1, 2]);
-    return chakram.wait();
   });
 
-  it('should save the change objects in the data base');
-  // TODO don't forget to check non undefined lastUpdateTS
+  it('should respond with an error if we use an unknown collection', () => {
+    const updateObj = {
+      operation: 'update',
+      changeSet: {
+        _id: 1
+      },
+      collectionName: 'unknown',
+      _id: 1
+    };
+    const deleteObj = {
+      operation: 'delete',
+      collectionName: 'unknown',
+      _id: 2
+    };
+    const changes = [updateObj, deleteObj];
+    const response = chakram.post(apiPath, {changes});
+    expect(response).to.have.status(500);
+    return chakram.wait();
+  });
 });

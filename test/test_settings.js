@@ -2,12 +2,10 @@
 
 const path = require('path');
 
-const dataFolder = `sync_server_test`;
-
 module.exports = {
   apiPath: '/api/v1',
-  dataPath: path.resolve('/tmp', dataFolder),
-  collectionNames: ['test_collection'],
+  dataPath: path.resolve(__dirname, 'integration/test_data'),
+  collectionNames: ['upload', 'empty', 'non_empty'],
   port: 8080,
   // Settings only used in tests
   test: {

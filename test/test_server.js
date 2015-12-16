@@ -16,8 +16,7 @@ if (action === 'start') {
   const pid = fs.readFileSync(pidFile);
   process.kill(Number(pid));
   fs.unlinkSync(pidFile);
-  fs.unlinkSync(`${settings.dataPath}/test_collection.db`);
-  fs.rmdirSync(settings.dataPath);
+  fs.unlinkSync(`${settings.dataPath}/upload.db`);
 } else {
   throw Error('Action not supported!');
 }
