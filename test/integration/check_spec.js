@@ -14,13 +14,10 @@ describe(apiPath, () => {
     });
   });
 
-  it('should respond with a status of 200', () => {
-    const response = chakram.head(apiPath);
-    return expect(response).to.have.status(200);
-  });
-
   it('should respond with an empty body', () => {
     const response = chakram.head(apiPath);
-    return expect(response.body).to.be.undefined;
+    expect(response).to.have.status(200);
+    expect(response.body).to.be.undefined;
+    return chakram.wait();
   });
 });

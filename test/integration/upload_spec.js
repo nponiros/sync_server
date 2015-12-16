@@ -14,13 +14,9 @@ describe('/upload', () => {
     });
   });
 
-  it('should respond with a status of 200', () => {
-    const response = chakram.post(apiPath, {changes: []});
-    return expect(response).to.have.status(200);
-  });
-
   it('should respond with a lastUpdateTS and empty changeIds if we send no changes', () => {
     const response = chakram.post(apiPath, {changes: []});
+    expect(response).to.have.status(200);
     expect(response).to.have.schema({
       type: 'object',
       properties: {
@@ -52,6 +48,7 @@ describe('/upload', () => {
     };
     const changes = [updateObj, deleteObj];
     const response = chakram.post(apiPath, {changes});
+    expect(response).to.have.status(200);
     expect(response).to.have.schema({
       type: 'object',
       properties: {
