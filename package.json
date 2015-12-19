@@ -9,15 +9,15 @@
     "url": "https://github.com/nponiros/sync_server.git"
   },
   "dependencies": {
-    "body-parser": "1.14.1",
+    "body-parser": "^1.14.2",
     "express": "4.13.3",
-    "nedb": "1.2.1"
+    "nedb": "^1.5.0"
   },
   "devDependencies": {
     "chakram": "1.2.1",
     "gulp": "3.9.0",
-    "gulp-eslint": "1.0.0",
-    "gulp-load-plugins": "1.0.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-load-plugins": "^1.1.0",
     "mocha": "2.3.4"
   },
   "scripts": {
