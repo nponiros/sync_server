@@ -25,8 +25,8 @@ describe(apiPath, () => {
     const response = chakram.post(apiPath, {lastUpdateTS: 1433015224209, collectionNames: ['non_empty']});
     expect(response).to.have.status(200);
     expect(response).to.have.schema('changes', {minItems: 1, maxItems: 1});
-    return chakram.wait().then((response) => {
-      expect(response.body.changes[0].lastUpdateTS).to.be.undefined;
+    return chakram.wait().then((rsp) => {
+      expect(rsp.body.changes[0].lastUpdateTS).to.equal(undefined);
     });
   });
 

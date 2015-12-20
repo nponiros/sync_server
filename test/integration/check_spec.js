@@ -17,7 +17,7 @@ describe(apiPath, () => {
   it('should respond with an empty body', () => {
     const response = chakram.head(apiPath);
     expect(response).to.have.status(200);
-    expect(response.body).to.be.undefined;
+    expect(response.body).to.equal(undefined);
     return chakram.wait();
   });
 });

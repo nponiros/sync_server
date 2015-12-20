@@ -71,14 +71,14 @@ describe('/upload', () => {
       expect(arr).to.have.length(3);
       for (let i = 0; i < arr.length - 1; i++) {
         const obj = JSON.parse(arr[i]);
-        expect(obj.lastUpdateTS).to.not.be.undefined;
-        expect(obj.operation).to.not.be.undefined;
-        expect(obj._id).to.not.be.undefined;
+        expect(obj.lastUpdateTS).to.not.equal(undefined);
+        expect(obj.operation).to.not.equal(undefined);
+        expect(obj._id).to.not.equal(undefined);
         expect(obj.collectionName).to.be.equal('upload');
         if (obj.operation === 'update') {
           expect(obj.changeSet).to.deep.equal(updateObj.changeSet);
         } else {
-          expect(obj.changeSet).to.be.undefined;
+          expect(obj.changeSet).to.equal(undefined);
         }
       }
     });
