@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "body-parser": "1.14.2",
+    "cors": "2.7.1",
     "express": "4.13.3",
     "nedb": "1.5.1",
     "yargs": "3.31.0"
@@ -32,5 +33,11 @@
   "preferGlobal": "true",
   "bin": {
     "sync-server": "./bin/main.js"
-  }
+  },
+  "description": "A simple server which can be used to synchronize data from multiple devices",
+  "keywords": [
+    "synchronization",
+    "file database",
+    "synchronization server"
+  ]
 }
