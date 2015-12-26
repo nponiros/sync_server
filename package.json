@@ -16,15 +16,15 @@
   },
   "devDependencies": {
     "chakram": "1.2.1",
-    "gulp": "3.9.0",
-    "gulp-eslint": "^1.1.1",
-    "gulp-load-plugins": "^1.1.0",
+    "eslint": "1.10.3",
     "mocha": "2.3.4"
   },
   "scripts": {
     "start": "node ./bin/main.js",
     "pretest": "node ./test/test_server start &",
-    "test": "mocha --reporter spec test/integration; node ./test/test_server stop"
+    "test": "mocha --reporter spec test/integration; node ./test/test_server stop",
+    "prepublish": "npm run lint && npm test",
+    "lint": "eslint -c eslint.yaml lib/** test/** bin/**"
   },
   "engines": {
     "node": ">=5.0.0"
