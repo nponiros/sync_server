@@ -9,7 +9,7 @@
     "url": "https://github.com/nponiros/sync_server.git"
   },
   "dependencies": {
-    "body-parser": "^1.14.2",
+    "body-parser": "1.14.2",
     "express": "4.13.3",
     "nedb": "1.5.1",
     "yargs": "3.31.0"
