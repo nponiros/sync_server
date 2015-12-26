@@ -1,4 +1,4 @@
-# SyncServer (WIP)
+# SyncServer
 
 A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices.
 
@@ -108,7 +108,6 @@ If you have any questions feel free to open an [issue](https://github.com/nponir
 
 ## TODO
 
-* CORS
 * Add logging
 
 ## License
