@@ -21,7 +21,7 @@ describe(apiPath, () => {
     return chakram.wait();
   });
 
-  it('should respond with changes not containing lastUpdateTS', () => {
+  it('should not send the lastUpdateTS as part of the changes', () => {
     const response = chakram.post(apiPath, {lastUpdateTS: 1433015224209, collectionNames: ['non_empty']});
     expect(response).to.have.status(200);
     expect(response).to.have.schema('changes', {minItems: 1, maxItems: 1});
