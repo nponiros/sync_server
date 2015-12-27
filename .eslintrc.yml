@@ -1,21 +1,8 @@
 ---
-  ecmaFeatures:
-    arrowFunctions: true
-    blockBindings: true
-    classes: true
-    defaultParams: true
-    destructuring: true
-    forOf: true
-    modules: true
-    objectLiteralComputedProperties: true
-    objectLiteralShorthandMethods: true
-    objectLiteralShorthandProperties: true
-    spread: true
-    restParams: true
-    templateStrings: true
   env:
     node: true
     mocha: true
+    es6: true
   rules:
     # Possible Errors
     comma-dangle: 1             # disallow or enforce trailing commas (recommended)

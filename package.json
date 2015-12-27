@@ -25,7 +25,7 @@
     "pretest": "node ./test/test_server start &",
     "test": "mocha --reporter spec test/integration; node ./test/test_server stop",
     "prepublish": "npm run lint && npm test",
-    "lint": "eslint -c eslint.yaml lib/** test/** bin/**"
+    "lint": "eslint lib/** test/** bin/**"
   },
   "engines": {
     "node": ">=5.0.0"
