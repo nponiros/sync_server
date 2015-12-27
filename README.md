@@ -1,5 +1,9 @@
 # SyncServer
 
+[![Code Climate](https://codeclimate.com/github/nponiros/sync_server/badges/gpa.svg)](https://codeclimate.com/github/nponiros/sync_server)
+
+## Synopsis
+
 A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices.
 
 ## Installation and usage
