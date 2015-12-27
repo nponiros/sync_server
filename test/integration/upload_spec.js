@@ -15,20 +15,22 @@ describe('/upload', () => {
     });
   });
 
+  const responseSchema = {
+    type: 'object',
+    properties: {
+      lastUpdateTS: {
+        type: 'number'
+      },
+      changeIds: {
+        type: 'array'
+      }
+    }
+  };
+
   it('should respond with a lastUpdateTS and empty changeIds if we send no changes', () => {
     const response = chakram.post(apiPath, {changes: []});
     expect(response).to.have.status(200);
-    expect(response).to.have.schema({
-      type: 'object',
-      properties: {
-        lastUpdateTS: {
-          type: 'number'
-        },
-        changeIds: {
-          type: 'array'
-        }
-      }
-    });
+    expect(response).to.have.schema(responseSchema);
     expect(response).to.have.json('changeIds', []);
     return chakram.wait();
   });
@@ -53,17 +55,7 @@ describe('/upload', () => {
     expect(response).to.have.json('changeIds', [1, 2]);
     return chakram.waitFor([
       expect(response).to.have.status(200),
-      expect(response).to.have.schema({
-        type: 'object',
-        properties: {
-          lastUpdateTS: {
-            type: 'number'
-          },
-          changeIds: {
-            type: 'array'
-          }
-        }
-      })
+      expect(response).to.have.schema(responseSchema)
     ]).then(() => {
       const content = fs.readFileSync(`${settings.dataPath}/upload.db`, {encoding: 'utf8'});
       const arr = content.split('\n');
