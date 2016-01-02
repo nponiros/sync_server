@@ -110,9 +110,5 @@ Coverage results for the unit tests can be found in the coverage directory.
 If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please open an [issue](https://github.com/nponiros/sync_server/issues) or [pull request](https://github.com/nponiros/sync_server/pulls).
 If you have any questions feel free to open an [issue](https://github.com/nponiros/sync_server/issues) with your question.
 
-## TODO
-
-* Add logging
-
 ## License
 [MIT License](./LICENSE)
