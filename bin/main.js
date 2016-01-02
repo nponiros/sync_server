@@ -18,7 +18,9 @@ const settings = {
   apiPath: defaultSettings.apiPath,
   port: argv.p || defaultSettings.port,
   dataPath: argv.path || defaultSettings.dataPath,
-  collectionNames
+  collectionNames,
+  accessLogFileName: defaultSettings.accessLogFileName,
+  errorLogFileName: defaultSettings.errorLogFileName
 };
 
 server.start(settings);
