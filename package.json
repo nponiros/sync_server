@@ -26,8 +26,8 @@
   "scripts": {
     "start": "node ./bin/main.js",
     "pretest": "node ./test/test_server start &",
-    "test": "mocha --reporter spec test/integration; node ./test/test_server stop",
-    "prepublish": "npm run lint && npm test",
+    "test": "npm run lint && mocha --reporter spec test/integration; node ./test/test_server stop",
+    "prepublish": "npm test",
     "lint": "eslint lib/** test/** bin/**"
   },
   "engines": {
