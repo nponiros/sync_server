@@ -20,7 +20,8 @@ const settings = {
   dataPath: argv.path || defaultSettings.dataPath,
   collectionNames,
   accessLogFileName: defaultSettings.accessLogFileName,
-  errorLogFileName: defaultSettings.errorLogFileName
+  errorLogFileName: defaultSettings.errorLogFileName,
+  logsPath: defaultSettings.logsPath
 };
 
 server.start(settings);

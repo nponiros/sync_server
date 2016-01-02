@@ -8,6 +8,7 @@ module.exports = {
   collectionNames: ['upload', 'empty', 'non_empty'],
   errorLogFileName: 'test-error.log',
   accessLogFileName: 'test-access.log',
+  logsPath: path.resolve(__dirname, '../'),
   port: 8080,
   // Settings only used in tests
   test: {
