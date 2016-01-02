@@ -29,6 +29,9 @@ You can use the following flags to change the defaults:
 --path path                   # Specify the path to the data directory. It has to be an absolute path
 --collections collectionName  # A comma separated list of collection names in which data is saved. Only names given here can be used in the SyncClient
 ```
+
+There are two server logs. An access.log containing information about the requests made against the server and an error.log containing information about exceptions and rejected promises. The logs are saved in the directory in which the server is installed.
+
 ### Node.js Version
 
 You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 5.0.0.
