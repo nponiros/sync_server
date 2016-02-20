@@ -8,8 +8,8 @@ module.exports = {
   collectionNames: ['upload', 'empty', 'non_empty'],
   errorLogFileName: 'test-error.log',
   accessLogFileName: 'test-access.log',
-  logsPath: path.resolve(__dirname, '../'),
   port: 8080,
+  requestSizeLimit: '100kb', // body-parser default
   // Settings only used in tests
   test: {
     domain: 'localhost',

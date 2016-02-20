@@ -5,6 +5,7 @@ const fs = require('fs');
 const pidFile = '/tmp/sync_server.pid';
 const action = process.argv[2];
 const settings = require('./test_settings.js');
+settings.logsPath = settings.dataPath;
 
 if (action === 'start') {
   const server = require('../lib/server.js');
