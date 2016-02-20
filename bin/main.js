@@ -2,26 +2,11 @@
 
 'use strict';
 
-const argv = require('yargs').argv;
-
-const defaultSettings = require('../lib/settings.js');
+const defaultSettings = require('../lib/default_settings.js');
 const server = require('../lib/server.js');
 
-let collectionNames;
-if (argv.collections) {
-  collectionNames = argv.collections.split(',');
-} else {
-  collectionNames = defaultSettings.collectionNames;
-}
+const getSettings = require('../lib/settings_handler');
 
-const settings = {
-  apiPath: defaultSettings.apiPath,
-  port: argv.p || defaultSettings.port,
-  dataPath: argv.path || defaultSettings.dataPath,
-  collectionNames,
-  accessLogFileName: defaultSettings.accessLogFileName,
-  errorLogFileName: defaultSettings.errorLogFileName,
-  logsPath: defaultSettings.logsPath
-};
+const settings = getSettings(defaultSettings, process.argv);
 
 server.start(settings);

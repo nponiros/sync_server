@@ -1,0 +1,8 @@
+{
+  "dataPath": "test/integration/test_data",
+  "collectionNames": ["testCollection"],
+  "errorLogFileName": "error.log",
+  "accessLogFileName": "access.log",
+  "requestSizeLimit": "100kb",
+  "port": 3000
+}
