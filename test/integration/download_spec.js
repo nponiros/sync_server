@@ -5,7 +5,7 @@ const expect = chakram.expect;
 
 const settings = require('../test_settings');
 const baseUrl = `${settings.test.protocol}${settings.test.domain}:${settings.port}`;
-const apiPath = `/api/v1/download`;
+const apiPath = '/api/v1/download';
 
 describe(apiPath, () => {
   before(() => {
