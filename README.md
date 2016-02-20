@@ -90,7 +90,7 @@ Used to download new change sets missing from the client. Which changes get down
 * Params: JSON with
   * lastUpdateTS:
     * type: Number
-    * explanation: Timestamp created with Date.now(). Used to distinguish between new and old change sets so we know what to send to the client
+    * explanation: Timestamp created with Date.now(). Used to distinguish between new and old change sets so we know what to send to the client. If the timestamp is __null__ or __undefined__ then all change sets are sent.
   * collectionNames:
     * type: Array<String>
     * explanation: Name of collections in which we want to look for new data
