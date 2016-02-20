@@ -39,7 +39,6 @@
     eqeqeq: 2                   # require the use of === and !==
     guard-for-in: 2             # make sure for-in loops have an if statement
     no-caller: 2                # disallow use of arguments.caller or arguments.callee
-    no-empty-label: 2           # disallow use of labels for anything other than loops and switches
     no-eq-null: 1               # disallow comparisons to null without a type-checking operator
     no-eval: 2                  # disallow use of eval()
     no-extend-native: 2         # disallow adding to native types
@@ -107,12 +106,11 @@
     quotes: [1, "single"]       # specify whether backticks, double or single quotes should be used
     semi-spacing: 1             # enforce spacing before and after semicolons
     semi: 2                     # require or disallow use of semicolons instead of ASI
-    space-after-keywords: 1     # require a space after certain keywords
+    keyword-spacing: 1
     space-before-blocks: 1      # require or disallow a space before blocks
     space-before-function-paren: [1, "never"]  # require or disallow a space before function opening parenthesis
     space-in-parens: 1              # require or disallow spaces inside parentheses
     space-infix-ops: 1              # require spaces around operators
-    space-return-throw-case: 1      # require a space after return, throw, and case
     space-unary-ops: 1              # require or disallow spaces before/after unary operators
     strict: [0, "global"]
     # ECMAScript 6
