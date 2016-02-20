@@ -20,21 +20,48 @@ You can start the server with:
 sync-server
 ```
 
-The server will listen per default on port 3000 and save data in your HOME directory under SYNC_SERVER_DATA. The default collection is called _test\_collection_. This is the collection name to use with the [SyncClient](https://github.com/nponiros/sync_client).
+### Default settings
+
+| Setting name      | Value                   | Description                                                                                     |
+| ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
+| dataPath          | $HOME/SYNC_SERVER_DATA  | Directory in which logs and data are saved                                                                   |
+| collectionNames   | ['testCollection']      | The collections available to use with the [SyncClient](https://github.com/nponiros/sync_client) |
+| errorLogFileName  | 'error.log'             | File name for the error log. Contains information about exceptions and rejected promises        |
+| accessLogFileName | 'access.log'            | File name for the access log. Contains information about the requests made against the server   |
+| requestSizeLimit  | '100kb'                 | request size limit for body-parser                                                              |
+| port              | 3000                    | Server port                                                                                     |
+
+### CLI Flags
 
 You can use the following flags to change the defaults:
 
 ```bash
--p number                     # Specify the port number
---path path                   # Specify the path to the data directory. It has to be an absolute path
---collections collectionName  # A comma separated list of collection names in which data is saved. Only names given here can be used in the SyncClient
+-c file | --config=file       # JSON configuration file to use. When this flag is used the rest of the CLI Flags are ignored. If settings are missing, the defaults are used
+-p number | --port=number     # Specify the port number
+--path=path                   # Path to a directory in which to save the data and logfiles. It is relative to the current directory or an absolute path
+--collections=collectionName  # A comma separated list of collection names in which data is saved. Only names given here can be used in the SyncClient
+--size=number                 # The request size limit for body-parser in KB
+--help                        # Shows this info
+--version                     # Shows the version of the sync-server
 ```
 
-There are two server logs. An access.log containing information about the requests made against the server and an error.log containing information about exceptions and rejected promises. The logs are saved in the directory in which the server is installed.
+### Config file example
+```json
+{
+  "dataPath": "test/integration/test_data",
+  "collectionNames": ["testCollection"],
+  "errorLogFileName": "error.log",
+  "accessLogFileName": "access.log",
+  "requestSizeLimit": "100kb",
+  "port": 3000
+}
+```
+
+dataPath is relative to the directory you execute the server in. You could also pass an absolute path for it.
 
 ### Node.js Version
 
-You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 5.0.0.
+You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 4.0.0.
 
 ## REST API
 
@@ -105,8 +132,7 @@ npm install
 npm test
 ```
 
-The last command will run the integration tests for the server. The integration tests will start a [test server](./test/test_server.js) on port 8080 so make sure that port if not in use before running the tests. The server will be stopped automatically after the tests are through.
-Coverage results for the unit tests can be found in the coverage directory.
+The last command will run the integration tests for the server. The integration tests will start a [test server](./test/test_server.js) on port 8080 so make sure that the port is not in use before running the tests. The server will be stopped automatically after the tests are through.
 
 ## Contributing
 
