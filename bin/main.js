@@ -2,11 +2,26 @@
 
 'use strict';
 
-const defaultSettings = require('../lib/default_settings.js');
-const server = require('../lib/server.js');
+const path = require('path');
+const argv = require('yargs').argv;
 
-const getSettings = require('../lib/settings_handler');
+const startAction = require('../lib/actions/start');
+const initAction = require('../lib/actions/init');
 
-const settings = getSettings(defaultSettings, process.argv);
+const action = argv._[0];
 
-server.start(settings);
+const basePath = process.cwd();
+
+switch (action) {
+  case 'init': initAction(basePath); break;
+  case 'start': {
+    const dataPath = path.resolve(argv.path);
+    startAction(dataPath);
+    break;
+  }
+  default: console.log('Action', action, 'not supported');
+}
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Possibly Unhandled Rejection at: Promise', p, 'reason:', reason);
+});

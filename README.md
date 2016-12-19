@@ -140,4 +140,7 @@ If you feel you can help in any way, be it with documentation, examples, extra t
 If you have any questions feel free to open an [issue](https://github.com/nponiros/sync_server/issues) with your question.
 
 ## License
+
 [MIT License](./LICENSE)
+
+Most files in the `sync` directory where copied from the [Dexie Websockets Sample](https://github.com/dfahlander/Dexie.js/blob/master/samples/remote-sync/websocket/WebSocketSyncServer.js) and are under the [Apache 2 license](./Apache_License). Look at the individual file for more details.

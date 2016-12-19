@@ -1,0 +1,15 @@
+{
+  "extends": "standard",
+  "rules": {
+    "semi": ["error", "always"],
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "ignore"
+    }],
+    "comma-dangle": ["error", "always-multiline"],
+    "object-curly-spacing": ["error", "always"],
+    "no-else-return": "error",
+    "max-len": ["error", 120]
+  }
+}
