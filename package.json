@@ -25,15 +25,17 @@
     "eslint-config-standard": "6.2.1",
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-standard": "2.0.1",
+    "istanbul": "0.4.5",
     "mocha": "3.2.0"
   },
   "scripts": {
     "start": "node ./bin/main.js",
-    "pretest": "node ./test/test_server start &",
-    "test": "npm run lint && npm run test-unit && mocha --reporter spec test/integration; node ./test/test_server stop",
+    "test": "npm run lint && npm run test:unit && npm run test:integration",
+    "test:integration": "mocha --reporter spec 'test/integration/**/*.spec.js'",
     "test:unit": "mocha --reporter spec 'test/unit/**/*.spec.js'",
-    "lint": "eslint --config .eslintrc 'lib/**/*.js' bin/main.js",
-    "lint:fix": "eslint --fix --config .eslintrc 'lib/**/*.js' bin/main.js"
+    "test:coverage": "istanbul cover --include-all-sources _mocha 'test/**/*.spec.js'",
+    "lint": "eslint --config .eslintrc 'lib/**/*.js' bin/main.js 'test/**/*.js'",
+    "lint:fix": "eslint --fix --config .eslintrc 'lib/**/*.js' bin/main.js 'test/**/*.js'"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -42,10 +44,11 @@
   "bin": {
     "sync-server": "./bin/main.js"
   },
-  "description": "A simple server which can be used to synchronize data from multiple devices",
+  "description": "A simple server which can be used to synchronize data from Dexie.Syncable and write them into files",
   "keywords": [
-    "synchronization",
     "file database",
-    "synchronization server"
+    "Dexie",
+    "Syncable",
+    "ISyncProtocol"
   ]
 }
