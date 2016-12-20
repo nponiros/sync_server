@@ -29,7 +29,17 @@ describe('setByKeyPath', () => {
     setByKeyPath(obj1, 'foo.bar', 'value');
     expect(obj1).to.deep.equal({ foo: { bar: 'value' } });
 
-    const obj2 = { foo: { bar: 'oldValue'  } };
+    const obj2 = { foo: { bar: 'oldValue' } };
+    setByKeyPath(obj2, 'foo.bar', 'value2');
+    expect(obj2).to.deep.equal({ foo: { bar: 'value2' } });
+  });
+
+  it('should work if the given keyPath ends with a dot', () => {
+    const obj1 = {};
+    setByKeyPath(obj1, 'foo.bar.', 'value');
+    expect(obj1).to.deep.equal({ foo: { bar: 'value' } });
+
+    const obj2 = { foo: { bar: 'oldValue' } };
     setByKeyPath(obj2, 'foo.bar', 'value2');
     expect(obj2).to.deep.equal({ foo: { bar: 'value2' } });
   });

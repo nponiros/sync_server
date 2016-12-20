@@ -4,14 +4,14 @@ const chakram = require('chakram');
 const expect = chakram.expect;
 
 const getServerChanges = require('../../../lib/sync/get_server_changes');
-const { CREATE, UPDATE, DELETE } = require('../../../lib/sync/types');
+const { CREATE, UPDATE } = require('../../../lib/sync/types');
 
 describe('getServerChanges', () => {
-  const promise = function(data) {
+  const promise = function (data) {
     return {
       then(cb) {
         return promise(cb(data));
-      }
+      },
     };
   };
 
@@ -55,10 +55,10 @@ describe('getServerChanges', () => {
             table: 'foo',
             key: 2,
             obj: { foo: 'baz' },
-          }
+          },
         ]);
         expect(dataToSend.clientIdentity).to.equal(2);
-        expect(dataToSend.currentRevision).to.equal(2)
+        expect(dataToSend.currentRevision).to.equal(2);
       });
   });
 });

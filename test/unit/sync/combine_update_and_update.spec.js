@@ -83,6 +83,6 @@ describe('combineUpdateAndUpdate', () => {
     };
 
     const res = combineUpdateAndUpdate(prevChange, nextChange);
-    expect(res).to.deep.equal({mods: { 'foo': { bar: 'baz' } }});
+    expect(res).to.deep.equal({ mods: { 'foo': { bar: 'baz' } } });
   });
 });
