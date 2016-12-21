@@ -90,11 +90,19 @@ You need to use a new version of Node.js as the code uses ES2015 features which 
   * syncedRevision: number (It is set to `0` if it is not defined)
   * requestId: any
   * partial: boolean (If `true` this is a partial synchronization. Default is `false`)
-* Return: JSON with
-  * changes: Array<ChangeObj>
-  * currentRevision: number
-  * clientIdentity: number (The newly generated clientIdentity or the one that was provided by the client)
-  * partial: boolean (This is a partial synchronization. The `partialsThreshold` number defines when we only send a partial synchronization)
+* Return: JSON object
+  * If the synchronization was successful
+    * success: true
+    * changes: Array<ChangeObj>
+    * currentRevision: number
+    * clientIdentity: number (The newly generated clientIdentity or the one that was provided by the client)
+    * partial: boolean (This is a partial synchronization. The `partialsThreshold` number defines when we only send a partial synchronization)
+    * requestId: any (requestId sent by the client)
+  * If the synchronization failed
+    * success: false
+    * errorMessage: string
+    * requestId: any (requestId sent by the client)
+  * In both cases the status code is set to 200
 
 #### ChangeObj
 
