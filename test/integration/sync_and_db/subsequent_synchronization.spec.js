@@ -28,7 +28,7 @@ describe('Subsequent Synchronization', () => {
 
   beforeEach(() => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger);
+    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
   });
 
   function expectWrapper(done, fn) {
