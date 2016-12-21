@@ -44,7 +44,7 @@
   "bin": {
     "sync-server": "./bin/main.js"
   },
-  "description": "A simple server which can be used to synchronize data from Dexie.Syncable and write them into files",
+  "description": "A simple server which can be used to synchronize data from Dexie.Syncable and an ISyncProtocol implementation and write them into files",
   "keywords": [
     "file database",
     "Dexie",
