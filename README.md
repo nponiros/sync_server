@@ -4,7 +4,7 @@
 
 ## Synopsis
 
-A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices.
+A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices. The server was made to work with the [ISyncProtocol](https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.ISyncProtocol) and [Dexie.Syncable](https://www.npmjs.com/package/dexie-syncable). It currently only works with the poll pattern.
 
 ## Installation and usage
 
@@ -14,114 +14,123 @@ Install globally using npm:
 npm install -g sync-server
 ```
 
+Before using the server it has to be initialized with:
+
+```bash
+sync-server init
+```
+
+The `init` action must be executed in an empty directory which will later be used to store the data. This folder represents a Database. During initialization a `config.json` file is create with the default server configuration.
+
 You can start the server with:
 
 ```bash
-sync-server
+sync-server --path INIT/DIRECTORY/PATH
 ```
+
+The `--path` flag must be given the path to the directory in which `init` was called.
 
 ### Default settings
 
+These settings are written in a file called `config.json` in the directory in which `init` was called. The config file is split into 4 sections: `db`, `logging`, `server`,  and `sync`.
+
+#### db
+
+| Setting name      | Value                   | Description                                                                                                    |
+| ----------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| connector         | 'NeDB'                  | The database used to store the data. Currently only [NeDB](https://github.com/louischatriot/nedb) is supported |
+| opts              | {}                      | Options for the database. These depend on the selected connector                                               |
+
+__NeDB Options__
+
+The `sync-server` supports the following NeDB options:
+
+* inMemoryOnly
+* timestampData
+* corruptAlertThreshold
+
+The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-database) contains more information about these options.
+
+#### logging
+
 | Setting name      | Value                   | Description                                                                                     |
 | ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| dataPath          | $HOME/SYNC_SERVER_DATA  | Directory in which logs and data are saved                                                                   |
-| collectionNames   | ['testCollection']      | The collections available to use with the [SyncClient](https://github.com/nponiros/sync_client) |
 | errorLogFileName  | 'error.log'             | File name for the error log. Contains information about exceptions and rejected promises        |
 | accessLogFileName | 'access.log'            | File name for the access log. Contains information about the requests made against the server   |
-| requestSizeLimit  | '100kb'                 | request size limit for body-parser                                                              |
+
+#### server
+
+| Setting name      | Value                   | Description                                                                                     |
+| ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
+| requestSizeLimit  | '100kb'                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                 |
 | port              | 3000                    | Server port                                                                                     |
+| protocol          | 'http'                  | Protocol used by the server. Currently only 'http' is supported                                 |
 
-### CLI Flags
+#### sync
 
-You can use the following flags to change the defaults:
+| Setting name      | Value                   | Description                                                                                           |
+| ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| partialsThreshold | 1000                    | If we have more than 1000 changes to send to the client, send only the first 1000 and `partial: true` |
 
-```bash
--c file | --config=file       # JSON configuration file to use. When this flag is used the rest of the CLI Flags are ignored. If settings are missing, the defaults are used
--p number | --port=number     # Specify the port number
---path=path                   # Path to a directory in which to save the data and logfiles. It is relative to the current directory or an absolute path
---collections=collectionName  # A comma separated list of collection names in which data is saved. Only names given here can be used in the SyncClient
---size=number                 # The request size limit for body-parser in KB
---help                        # Shows this info
---version                     # Shows the version of the sync-server
-```
-
-### Config file example
-```json
-{
-  "dataPath": "test/integration/test_data",
-  "collectionNames": ["testCollection"],
-  "errorLogFileName": "error.log",
-  "accessLogFileName": "access.log",
-  "requestSizeLimit": "100kb",
-  "port": 3000
-}
-```
-
-dataPath is relative to the directory you execute the server in. You could also pass an absolute path for it.
 
 ### Node.js Version
 
-You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 4.0.0.
+You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 6.0.0.
 
-## REST API
+## API
 
-### Data upload
-Used to upload the change sets. Each changes gets saved in a collection depending on the collectionName attribute in the change object.
+### Synchronization
 
-* URL: /api/v1/upload
-* Method: POST
+* URL: `/`
+* Method: `POST`
 * Params: JSON with
-  * changes:
-    * type: Array<ChangeObj>
-    * explanation: Array of change object to be saved to disk
+  * baseRevision: number (It is set to `0` if it is not defined)
+  * changes: Array<ChangeObj>
+  * clientIdentity: number (The server generates one if it is not defined)
+  * syncedRevision: number (It is set to `0` if it is not defined)
+  * requestId: any
+  * partial: boolean (If `true` this is a partial synchronization. Default is `false`)
 * Return: JSON with
-  * changeIds:
-    * type: Array<String>
-    * explanation: Array with the IDs of all objects which where written in the various collections
-  * lastUpdateTS:
-    * type: Number
-    * explanation: Timestamp created with Date.now(). Used by the download operation
+  * changes: Array<ChangeObj>
+  * currentRevision: number
+  * clientIdentity: number (The newly generated clientIdentity or the one that was provided by the client)
+  * partial: boolean (This is a partial synchronization. The `partialsThreshold` number defines when we only send a partial synchronization)
 
-### Data download
-Used to download new change sets missing from the client. Which changes get downloaded depend on the lastUpdateTS attribute.
+#### ChangeObj
 
-* URL: /api/v1/download
-* Method: POST
-* Params: JSON with
-  * lastUpdateTS:
-    * type: Number
-    * explanation: Timestamp created with Date.now(). Used to distinguish between new and old change sets so we know what to send to the client. If the timestamp is __null__ or __undefined__ then all change sets are sent.
-  * collectionNames:
-    * type: Array<String>
-    * explanation: Name of collections in which we want to look for new data
-* Return: JSON with
-  * changes:
-    * type: Array<ChangeObj>
-    * explanation: Array of change objects newer than lastUpdateTS
+There are 3 types of `ChangeObj`. See also [Dexie.Syncable.IDatabaseChange](https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.IDatabaseChange)
 
-### Online check
-Can be used to check if the server is online
-
-* URL: /api/v1/check
-* Method: HEAD
-* Params: None
-* Return: Headers
-
-### ChangeObj
+__CREATE__
 
 Object with:
-* operation:
-  * type: ENUM(update | delete),
-  * explanation: Used to distinguish between data update and delete. Delete does not actually delete anything in the server database. It is used to delete data in the client database
-* changeSet:
-  * type: Object
-  * explanation: The actual data to be updated. Only relevant for update operations
-* collectionName:
-  * type: String
-  * explanation: The name of the collection in which we want to save the change set
-* \_id:
-  * type: String
-  * explanation: ID of the object we are changing. If used with SyncClient, this ID is the same as the ID in the change set
+* type: 1
+* obj: Object (The object to add to the database. Must also contain the `key`, but does not have to use the `key` property )
+* key: any (The unique ID of the object. Is also contained in `obj`)
+* table: string (The name of the table to which the object belongs to)
+
+__UPDATE__
+
+Object with:
+* type: 2
+* mods: Object (Contains only the modifications made to the object with the given `key`)
+* key: any (The unique ID of the object. Is also contained in `obj`)
+* table: string (The name of the table to which the object belongs to)
+
+__DELETE__
+
+Object with:
+* type: 3
+* key: any (The unique ID of the object we want to delete)
+* table: string (The name of the table to which the object belongs to)
+
+### Online check
+
+Can be used to check if the server is online.
+
+* URL: `/check`
+* Method: `HEAD`
+* Params: None
+* Return: Headers
 
 ## Running the tests
 
@@ -131,8 +140,6 @@ The following commands can be execute to run the tests.
 npm install
 npm test
 ```
-
-The last command will run the integration tests for the server. The integration tests will start a [test server](./test/test_server.js) on port 8080 so make sure that the port is not in use before running the tests. The server will be stopped automatically after the tests are through.
 
 ## Contributing
 
