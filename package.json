@@ -26,7 +26,8 @@
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-standard": "2.0.1",
     "istanbul": "0.4.5",
-    "mocha": "3.2.0"
+    "mocha": "3.2.0",
+    "publish-please": "2.2.0"
   },
   "scripts": {
     "start": "node ./bin/main.js",
@@ -35,7 +36,9 @@
     "test:unit": "mocha --reporter spec 'test/unit/**/*.spec.js'",
     "test:coverage": "istanbul cover --include-all-sources _mocha 'test/**/*.spec.js'",
     "lint": "eslint --config .eslintrc 'lib/**/*.js' bin/main.js 'test/**/*.js'",
-    "lint:fix": "eslint --fix --config .eslintrc 'lib/**/*.js' bin/main.js 'test/**/*.js'"
+    "lint:fix": "eslint --fix --config .eslintrc 'lib/**/*.js' bin/main.js 'test/**/*.js'",
+    "publish-please": "publish-please",
+    "prepublish": "publish-please guard"
   },
   "engines": {
     "node": ">=6.0.0"
