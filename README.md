@@ -77,6 +77,10 @@ The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-databa
 
 You need to use a new version of Node.js as the code uses ES2015 features which are not available in Node.js versions < 6.0.0.
 
+## Caveat
+
+In case the server encounters an `uncaughtException` or an `unhandledRejection` it will write to the log and exit with status code 1. This should normally not happen, if it does happen please open an [issue](https://github.com/nponiros/sync_server/issues) with the information from the error log.
+
 ## API
 
 ### Synchronization
@@ -152,7 +156,7 @@ npm test
 ## TODO
 
 * add https support
-* cleanup changes array
+* cleanup changes table
 
 ## Contributing
 
