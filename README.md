@@ -55,16 +55,17 @@ The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-databa
 
 | Setting name      | Value                   | Description                                                                                     |
 | ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| errorLogFileName  | 'error.log'             | File name for the error log. Contains information about exceptions and rejected promises        |
-| accessLogFileName | 'access.log'            | File name for the access log. Contains information about the requests made against the server   |
+| errorLogFileName  | "error.log"             | File name for the error log. Contains information about exceptions and rejected promises        |
+| accessLogFileName | "access.log"            | File name for the access log. Contains information about the requests made against the server   |
 
 #### server
 
 | Setting name      | Value                   | Description                                                                                     |
 | ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| requestSizeLimit  | '100kb'                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                 |
-| port              | 3000                    | Server port                                                                                     |
-| protocol          | 'http'                  | Protocol used by the server. Currently only 'http' is supported                                 |
+| requestSizeLimit  | "100kb"                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                 |
+| port              | 3000                    | Server port. Must be a non-privileged port                                                      |
+| protocol          | "http"                  | Protocol used by the server. "http" or "https"                                                  |
+| https             | {}                      | This object contains the paths for the files needed by https                                    |
 
 #### sync
 
@@ -80,6 +81,24 @@ You need to use a new version of Node.js as the code uses ES2015 features which 
 ## Caveat
 
 In case the server encounters an `uncaughtException` or an `unhandledRejection` it will write to the log and exit with status code 1. This should normally not happen, if it does happen please open an [issue](https://github.com/nponiros/sync_server/issues) with the information from the error log.
+
+## HTTPS support
+
+Per default the server uses HTTP. You can enable HTTPS by setting the `protocol` in the config to `'https'` and adding paths in the `https` object. There is support for `key` and `cert` or for `pfx`. For example:
+
+```json
+{
+  "server": {
+    "protocol": "https",
+    "https": {
+      "key": "key_filename.pem",
+      "cert": "cert_filename.pem"
+    }
+  }
+}
+```
+
+The files must be in the same directory as the server's config file.
 
 ## API
 
@@ -155,7 +174,6 @@ npm test
 
 ## TODO
 
-* add https support
 * cleanup changes table
 
 ## Contributing
