@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [] - Not Released
+
+This is a complete rewrite to make the server work with Dexie.Syncable. This version is not backwards compatible. The new API is described in the README. Please open an issue if you are using an old version and want to upgrade it.
+
 ## [1.0.0] - 2016-02-20
 
 ### Added
