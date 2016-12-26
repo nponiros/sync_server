@@ -21,7 +21,3 @@ switch (action) {
   }
   default: console.log('Action', action, 'not supported');
 }
-
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Possibly Unhandled Rejection at: Promise', p, 'reason:', reason);
-});
