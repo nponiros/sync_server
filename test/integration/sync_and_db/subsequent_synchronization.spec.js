@@ -93,7 +93,12 @@ describe('Subsequent Synchronization', () => {
           }).then((dataToSend) => {
             expectWrapper(done, () => {
               expect(dataToSend.changes.length).to.equal(1);
-              expect(dataToSend.changes[0]).to.deep.equal(create2);
+              expect(dataToSend.changes[0]).to.deep.equal({
+                type: create2.type,
+                obj: create2.obj,
+                key: create2.key,
+                table: create2.table,
+              });
               done();
             });
           });

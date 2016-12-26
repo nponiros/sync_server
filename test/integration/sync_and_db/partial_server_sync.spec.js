@@ -66,14 +66,24 @@ describe('Partial server sync', () => {
       })
       .then((dataToSend) => {
         expectWrapper(done, () => {
-          expect(dataToSend.changes).to.deep.equal([create1]);
+          expect(dataToSend.changes).to.deep.equal([{
+            key: create1.key,
+            table: create1.table,
+            obj: create1.obj,
+            type: create1.type,
+          }]);
           expect(dataToSend.partial).to.equal(true);
         });
         return db.partialChanges.get(dataToSend.clientIdentity);
       })
       .then((data) => {
         expectWrapper(done, () => {
-          expect(data.changes).to.deep.equal([create2]);
+          expect(data.changes).to.deep.equal([{
+            key: create2.key,
+            table: create2.table,
+            obj: create2.obj,
+            type: create2.type,
+          }]);
           done();
         });
       });
@@ -107,7 +117,12 @@ describe('Partial server sync', () => {
         })
         .then((dataToSend) => {
           expectWrapper(done, () => {
-            expect(dataToSend.changes).to.deep.equal([create1]);
+            expect(dataToSend.changes).to.deep.equal([{
+              key: create1.key,
+              type: create1.type,
+              obj: create1.obj,
+              table: create1.table,
+            }]);
             expect(dataToSend.partial).to.equal(true);
           });
           return handler({
@@ -120,7 +135,12 @@ describe('Partial server sync', () => {
         })
         .then((dataToSend) => {
           expectWrapper(done, () => {
-            expect(dataToSend.changes).to.deep.equal([create2]);
+            expect(dataToSend.changes).to.deep.equal([{
+              key: create2.key,
+              type: create2.type,
+              obj: create2.obj,
+              table: create2.table,
+            }]);
             expect(dataToSend.partial).to.equal(false);
           });
           return db.partialChanges.get(1);

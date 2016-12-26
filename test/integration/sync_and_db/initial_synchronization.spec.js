@@ -122,7 +122,12 @@ describe('Initial synchronization', () => {
         }).then((dataToSend) => {
           expectWrapper(done, () => {
             expect(dataToSend.changes.length).to.equal(1);
-            expect(dataToSend.changes[0]).to.deep.equal(create);
+            expect(dataToSend.changes[0]).to.deep.equal({
+              type: create.type,
+              obj: create.obj,
+              key: create.key,
+              table: create.table,
+            });
             done();
           });
         });
