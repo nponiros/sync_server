@@ -149,6 +149,11 @@ npm install
 npm test
 ```
 
+## TODO
+
+* add https support
+* cleanup changes array
+
 ## Contributing
 
 If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please open an [issue](https://github.com/nponiros/sync_server/issues) or [pull request](https://github.com/nponiros/sync_server/pulls).
