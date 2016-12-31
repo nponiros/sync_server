@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [] - Not released
+
+* Allow CORS to be configured
+
 ## [2.0.0-beta.1] - 2016-12-27
 
 This is a complete rewrite to make the server work with Dexie.Syncable. This version is not backwards compatible. The new API is described in the README. Please open an issue if you are using an old version and want to upgrade it.

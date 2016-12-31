@@ -60,12 +60,13 @@ The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-databa
 
 #### server
 
-| Setting name      | Value                   | Description                                                                                     |
-| ----------------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| requestSizeLimit  | "100kb"                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                 |
-| port              | 3000                    | Server port. Must be a non-privileged port                                                      |
-| protocol          | "http"                  | Protocol used by the server. "http" or "https"                                                  |
-| https             | {}                      | This object contains the paths for the files needed by https                                    |
+| Setting name      | Value                   | Description                                                                                          |
+| ----------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| requestSizeLimit  | "100kb"                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                      |
+| port              | 3000                    | Server port. Must be a non-privileged port                                                           |
+| protocol          | "http"                  | Protocol used by the server. "http" or "https"                                                       |
+| https             | {}                      | This object contains the paths for the files needed by https                                         |
+| cors              | {}                      | You can use this object to configure [CORS](https://github.com/expressjs/cors#configuration-options) |
 
 #### sync
 
