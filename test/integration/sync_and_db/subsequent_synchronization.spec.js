@@ -36,6 +36,7 @@ describe('Subsequent Synchronization', () => {
       fn();
     } catch (e) {
       done(e);
+      throw e;
     }
   }
 
@@ -103,5 +104,63 @@ describe('Subsequent Synchronization', () => {
             });
           });
         });
+  });
+
+  it('should send again the same changes if the client syncedRevision did not change', (done) => {
+    const create1 = {
+      rev: 1,
+      type: CREATE,
+      obj: { foo: 'bar' },
+      key: 1,
+      table: 'foo',
+      source: 2,
+    };
+    const create2 = {
+      rev: 2,
+      type: CREATE,
+      obj: { bar: 'baz' },
+      key: 2,
+      table: 'foo',
+      source: 2,
+    };
+    db.addChangesData(create1)
+      .then(() => {
+        return db.addChangesData(create2);
+      })
+      .then(() => handler({
+        changes: [],
+        requestId: 1,
+        clientIdentity: 1,
+        syncedRevision: 1,
+      })
+      ).then((dataToSend) => {
+        expectWrapper(done, () => {
+          expect(dataToSend.changes.length).to.equal(1);
+          expect(dataToSend.changes[0]).to.deep.equal({
+            type: create2.type,
+            obj: create2.obj,
+            key: create2.key,
+            table: create2.table,
+          });
+        });
+
+        return handler({
+          changes: [],
+          requestId: 1,
+          clientIdentity: 1,
+          syncedRevision: 1,
+        });
+      }).then((dataToSend) => {
+        expectWrapper(done, () => {
+          expect(dataToSend.changes.length).to.equal(1);
+          expect(dataToSend.changes[0]).to.deep.equal({
+            type: create2.type,
+            obj: create2.obj,
+            key: create2.key,
+            table: create2.table,
+          });
+        });
+        done();
+      });
   });
 });
