@@ -4,7 +4,7 @@
 
 ## Synopsis
 
-A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices. The server was made to work with the [ISyncProtocol](https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.ISyncProtocol) and [Dexie.Syncable](https://www.npmjs.com/package/dexie-syncable). It currently only works with the poll pattern.
+A small node server which uses [NeDB](https://github.com/louischatriot/nedb) to write data to the disk. The server can be used with a client for example [SyncClient](https://github.com/nponiros/sync_client) to save change sets which can later be synchronized with other devices. The server was made to work with the [ISyncProtocol](https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.ISyncProtocol) and [Dexie.Syncable](https://www.npmjs.com/package/dexie-syncable). It supports the poll pattern using AJAX and the react pattern using [nodejs-websocket](https://www.npmjs.com/package/nodejs-websocket).
 
 ## Installation and usage
 
@@ -64,8 +64,9 @@ The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-databa
 | ----------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- |
 | requestSizeLimit  | "100kb"                 | Request size limit for [body-parser](https://www.npmjs.com/package/body-parser)                      |
 | port              | 3000                    | Server port. Must be a non-privileged port                                                           |
-| protocol          | "http"                  | Protocol used by the server. "http" or "https"                                                       |
+| protocol          | "http"                  | Protocol used by the server. "http", "https", "ws" or "wss"                                          |
 | https             | {}                      | This object contains the paths for the files needed by https                                         |
+| wss               | {}                      | This object contains the paths for the files needed by wss                                           |
 | cors              | {}                      | You can use this object to configure [CORS](https://github.com/expressjs/cors#configuration-options) |
 
 #### sync
@@ -83,9 +84,13 @@ You need to use a new version of Node.js as the code uses ES2015 features which 
 
 In case the server encounters an `uncaughtException` or an `unhandledRejection` it will write to the log and exit with status code 1. This should normally not happen, if it does happen please open an [issue](https://github.com/nponiros/sync_server/issues) with the information from the error log.
 
-## HTTPS support
+## Protocols
 
-Per default the server uses HTTP. You can enable HTTPS by setting the `protocol` in the config to `'https'` and adding paths in the `https` object. There is support for `key` and `cert` or for `pfx`. For example:
+The server supports 4 different protocols: `http`, `https`, `ws` and `wss`. The `http` and `https` protocols can be used for the poll pattern where the server and client communicate via HTTP requests. The `ws` and `wss` protocols can be used for the react pattern where server and client communicate via WebSockets. Per default the `http` protocol is used. For `https` and `wss` you have to at least provide certificates. See below on how to configure those.
+
+### Configuring HTTPS
+
+In order to use HTTPS you need to set the `protocol` to `"https"` and add paths for the certificate in the `https` object. There is support for `key` and `cert` or for `pfx`. For example:
 
 ```json
 {
@@ -101,15 +106,38 @@ Per default the server uses HTTP. You can enable HTTPS by setting the `protocol`
 
 The files must be in the same directory as the server's config file.
 
-## API
+### Configuring WebSockets (WS)
+
+In order to use WebSockets you need to set the `protocol` to `"ws"`.
+
+### Configuring Secure WebSockets (WSS)
+
+In order to use WSS you need to set the `protocol` to `"wss"` and add paths for the certificate in the `wss` object. There is support for `key` and `cert` or for `pfx`. For example:
+
+```json
+{
+  "server": {
+    "protocol": "wss",
+    "wss": {
+      "key": "key_filename.pem",
+      "cert": "cert_filename.pem"
+    }
+  }
+}
+```
+
+The files must be in the same directory as the server's config file.
+
+## API for the poll pattern
 
 ### Synchronization
 
 * URL: `/`
 * Method: `POST`
+* ContentType: `application/json`. This header must be set, otherwise the server will not be able to parse the data
 * Params: JSON with
   * baseRevision: number (It is set to `0` if it is not defined)
-  * changes: Array<ChangeObj>
+  * changes: Array<ChangeObj> (The [ChangeObj](#changeobj) is described below) 
   * clientIdentity: number (The server generates one if it is not defined)
   * syncedRevision: number (It is set to `0` if it is not defined)
   * requestId: any
@@ -117,7 +145,7 @@ The files must be in the same directory as the server's config file.
 * Return: JSON object
   * If the synchronization was successful
     * success: true
-    * changes: Array<ChangeObj>
+    * changes: Array<ChangeObj> (The [ChangeObj](#changeobj) is described below)
     * currentRevision: number
     * clientIdentity: number (The newly generated clientIdentity or the one that was provided by the client)
     * partial: boolean (This is a partial synchronization. The `partialsThreshold` number defines when we only send a partial synchronization)
@@ -128,7 +156,88 @@ The files must be in the same directory as the server's config file.
     * requestId: any (requestId sent by the client)
   * In both cases the status code is set to 200
 
-#### ChangeObj
+### Online check
+
+Can be used to check if the server is online.
+
+* URL: `/check`
+* Method: `HEAD`
+* Params: None
+* Return: Headers
+
+## API for the react pattern
+
+Currently the WebSocket server only supports sending and receiving text messages. Binary is not supported.
+
+__Request Messages__
+
+The server can receive 3 message types: `clientIdentity`, `subscribe` and `changes`.
+
+__Response Messages__
+
+The server can respond with 4 message types: `clientIdentity`, `ack`, `changes` and `error`.
+ 
+### Requests
+
+#### clientIdentity
+
+This must be the first message sent.
+
+* Params: JSON with
+  * type: "clientIdentity"
+  * clientIdentity: number (The server generates one if it is not defined)
+* Server responds with `clientIdentity`
+
+#### subscribe
+
+This must be the second message sent. It is needed to setup callbacks to inform the client about changes made by other clients.
+
+* Params: JSON with
+  * type: "subscribe"
+  * syncedRevision: number (It is set to `0` if it is not defined)
+* Server responds with `changes` or `error`
+
+#### changes
+
+* Params: JSON with
+  * type: "changes"
+  * baseRevision: number (It is set to `0` if it is not defined)
+  * changes: Array<ChangeObj> (The [ChangeObj](#changeobj) is described below)
+  * partial: boolean (If `true` this is a partial synchronization. Default is `false`)
+  * requestId: any
+* Server responds with `ack` or `error`
+* This event would trigger a `changes` or `error` message for all other connected clients
+
+### Responses
+
+#### ack
+
+* Params: JSON object
+  * type: "ack"
+  * requestId: any (The ID sent by the client)
+
+#### clientIdentity
+
+* Params: JSON object
+  * type: "clientIdentity"
+  * clientIdentity: number (The newly generated clientIdentity or the one that was provided by the client)
+
+#### changes
+
+* Params: JSON object
+  * type: "changes"
+  * changes: Array<ChangeObj> (The [ChangeObj](#changeobj) is described below)
+  * currentRevision: number
+  * partial: boolean (This is a partial synchronization. The `partialsThreshold` number defines when we only send a partial synchronization)
+
+#### error
+
+* Params: JSON
+  * type: "error"
+  * errorMessage: string
+  * requestId: any (Only sent if the `changes` request caused an error)
+
+## ChangeObj
 
 There are 3 types of `ChangeObj`. See also [Dexie.Syncable.IDatabaseChange](https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.IDatabaseChange)
 
@@ -155,15 +264,6 @@ Object with:
 * key: any (The unique ID of the object we want to delete)
 * table: string (The name of the table to which the object belongs to)
 
-### Online check
-
-Can be used to check if the server is online.
-
-* URL: `/check`
-* Method: `HEAD`
-* Params: None
-* Return: Headers
-
 ## Running the tests
 
 The following commands can be execute to run the tests.
@@ -176,6 +276,7 @@ npm test
 ## TODO
 
 * cleanup changes table
+* Add E2E tests
 
 ## Contributing
 

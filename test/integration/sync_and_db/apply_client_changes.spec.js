@@ -29,14 +29,6 @@ describe('applyClientChanges', () => {
     db = new Db({ inMemoryOnly: true }, logger);
   });
 
-  function expectWrapper(done, fn) {
-    try {
-      fn();
-    } catch (e) {
-      done(e);
-    }
-  }
-
   describe('CREATE', () => {
     it('should add the given client data to the given table', (done) => {
       const create = {
@@ -46,18 +38,15 @@ describe('applyClientChanges', () => {
         table: 'foo',
       };
       db.addData('foo', 3, {})
-        .then(() => {
-          applyClientChanges(db, 0, 1, [create], 1)
-              .then(() => {
-                db.getData('foo', 1)
-                    .then((data) => {
-                      expectWrapper(done, () => {
-                        expect(data).to.deep.equal(create.obj);
-                        done();
-                      });
-                    });
-              });
-        });
+          .then(() => applyClientChanges(db, 0, 1, [create], 1))
+          .then(() => db.getData('foo', 1))
+          .then((data) => {
+            expect(data).to.deep.equal(create.obj);
+            done();
+          })
+          .catch((e) => {
+            done(e);
+          });
     });
 
     it('should add the change object to the changes table', (done) => {
@@ -71,18 +60,24 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       applyClientChanges(db, 0, nextRevision, [create], clientID)
           .then(() => {
-            db.changesTable.store.find({}, (err, data) => {
-              if (err) {
-                done(err);
-              }
-              expectWrapper(done, () => {
-                expect(data[0].type).to.equal(CREATE);
-                expect(data[0].obj).to.deep.equal(create.obj);
-                expect(data[0].rev).to.equal(nextRevision);
-                expect(data[0].source).to.equal(clientID);
-                done();
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.find({}, (err, data) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(data);
               });
             });
+          })
+          .then((data) => {
+            expect(data[0].type).to.equal(CREATE);
+            expect(data[0].obj).to.deep.equal(create.obj);
+            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].source).to.equal(clientID);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
   });
@@ -99,15 +94,21 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       applyClientChanges(db, 0, nextRevision, [update], clientID)
           .then(() => {
-            db.changesTable.store.count({}, (err, count) => {
-              if (err) {
-                done(err);
-              }
-              expectWrapper(done, () => {
-                expect(count).to.equal(0);
-                done();
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.count({}, (err, count) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(count);
               });
             });
+          })
+          .then((count) => {
+            expect(count).to.equal(0);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -122,19 +123,23 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 3, {})
+          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
           .then(() => {
-            applyClientChanges(db, 0, nextRevision, [update], clientID)
-                .then(() => {
-                  db.changesTable.store.count({}, (err, count) => {
-                    if (err) {
-                      done(err);
-                    }
-                    expectWrapper(done, () => {
-                      expect(count).to.equal(0);
-                      done();
-                    });
-                  });
-                });
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.count({}, (err, count) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(count);
+              });
+            });
+          })
+          .then((count) => {
+            expect(count).to.equal(0);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -149,17 +154,14 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 2, { bar: 'bar' })
-          .then(() => {
-            applyClientChanges(db, 0, nextRevision, [update], clientID)
-                .then(() => {
-                  db.getData('foo', 2)
-                      .then((data) => {
-                        expectWrapper(done, () => {
-                          expect(data).to.deep.equal({ foo: 'bar', bar: 'bar' });
-                          done();
-                        });
-                      });
-                });
+          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
+          .then(() => db.getData('foo', 2))
+          .then((data) => {
+            expect(data).to.deep.equal({ foo: 'bar', bar: 'bar' });
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -174,23 +176,27 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 2, {})
+          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
           .then(() => {
-            applyClientChanges(db, 0, nextRevision, [update], clientID)
-                .then(() => {
-                  db.changesTable.store.find({}, (err, data) => {
-                    if (err) {
-                      done(err);
-                    }
-                    expectWrapper(done, () => {
-                      expect(data.length).to.equal(1);
-                      expect(data[0].type).to.equal(UPDATE);
-                      expect(data[0].mods).to.deep.equal(update.mods);
-                      expect(data[0].rev).to.equal(nextRevision);
-                      expect(data[0].source).to.equal(clientID);
-                      done();
-                    });
-                  });
-                });
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.find({}, (err, data) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(data);
+              });
+            });
+          })
+          .then((data) => {
+            expect(data.length).to.equal(1);
+            expect(data[0].type).to.equal(UPDATE);
+            expect(data[0].mods).to.deep.equal(update.mods);
+            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].source).to.equal(clientID);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
   });
@@ -206,15 +212,21 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       applyClientChanges(db, 0, nextRevision, [remove], clientID)
           .then(() => {
-            db.changesTable.store.count({}, (err, count) => {
-              if (err) {
-                done(err);
-              }
-              expectWrapper(done, () => {
-                expect(count).to.equal(0);
-                done();
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.count({}, (err, count) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(count);
               });
             });
+          })
+          .then((count) => {
+            expect(count).to.equal(0);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -228,19 +240,23 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 3, {})
+          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
           .then(() => {
-            applyClientChanges(db, 0, nextRevision, [remove], clientID)
-                .then(() => {
-                  db.changesTable.store.count({}, (err, count) => {
-                    if (err) {
-                      done(err);
-                    }
-                    expectWrapper(done, () => {
-                      expect(count).to.equal(0);
-                      done();
-                    });
-                  });
-                });
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.count({}, (err, count) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(count);
+              });
+            });
+          })
+          .then((count) => {
+            expect(count).to.equal(0);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -254,17 +270,14 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 2, { bar: 'bar' })
-          .then(() => {
-            applyClientChanges(db, 0, nextRevision, [remove], clientID)
-                .then(() => {
-                  db.getData('foo', 2)
-                      .then((data) => {
-                        expectWrapper(done, () => {
-                          expect(data).to.be.null;
-                          done();
-                        });
-                      });
-                });
+          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
+          .then(() => db.getData('foo', 2))
+          .then((data) => {
+            expect(data).to.be.null;
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
 
@@ -278,22 +291,26 @@ describe('applyClientChanges', () => {
       const nextRevision = 1;
       // Create table
       db.addData('foo', 2, {})
+          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
           .then(() => {
-            applyClientChanges(db, 0, nextRevision, [remove], clientID)
-                .then(() => {
-                  db.changesTable.store.find({}, (err, data) => {
-                    if (err) {
-                      done(err);
-                    }
-                    expectWrapper(done, () => {
-                      expect(data.length).to.equal(1);
-                      expect(data[0].type).to.equal(DELETE);
-                      expect(data[0].rev).to.equal(nextRevision);
-                      expect(data[0].source).to.equal(clientID);
-                      done();
-                    });
-                  });
-                });
+            return new Promise((resolve, reject) => {
+              db.changesTable.store.find({}, (err, data) => {
+                if (err) {
+                  reject(err);
+                }
+                resolve(data);
+              });
+            });
+          })
+          .then((data) => {
+            expect(data.length).to.equal(1);
+            expect(data[0].type).to.equal(DELETE);
+            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].source).to.equal(clientID);
+            done();
+          })
+          .catch((e) => {
+            done(e);
           });
     });
   });

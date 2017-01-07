@@ -3,9 +3,9 @@
 const chakram = require('chakram');
 const expect = chakram.expect;
 
-const syncHandler = require('../../../lib/sync/handler');
-const Db = require('../../../lib/db_connectors/NeDB/db');
-const { CREATE } = require('../../../lib/sync/types');
+const syncHandler = require('../../../../lib/sync/poll_handler');
+const Db = require('../../../../lib/db_connectors/NeDB/db');
+const { CREATE } = require('../../../../lib/sync/types');
 
 const logger = {
   file: {
@@ -22,7 +22,7 @@ const logger = {
   },
 };
 
-describe('Subsequent Synchronization', () => {
+describe('Poll: Subsequent Synchronization', () => {
   let db;
   let handler;
 
@@ -30,15 +30,6 @@ describe('Subsequent Synchronization', () => {
     db = new Db({ inMemoryOnly: true }, logger);
     handler = syncHandler(db, logger, { partialsThreshold: 1000 });
   });
-
-  function expectWrapper(done, fn) {
-    try {
-      fn();
-    } catch (e) {
-      done(e);
-      throw e;
-    }
-  }
 
   it('should not return server changes to the client when those have the same clientIdentity', (done) => {
     const create = {
@@ -50,17 +41,13 @@ describe('Subsequent Synchronization', () => {
       source: 1,
     };
     db.addChangesData(create)
-        .then(() => {
-          handler({
-            changes: [],
-            requestId: 1,
-            clientIdentity: 1,
-          }).then((dataToSend) => {
-            expectWrapper(done, () => {
-              expect(dataToSend.changes.length).to.equal(0);
-              done();
-            });
-          });
+        .then(() => handler({ changes: [], requestId: 1, clientIdentity: 1 }))
+        .then((dataToSend) => {
+          expect(dataToSend.changes.length).to.equal(0);
+          done();
+        })
+        .catch((e) => {
+          done(e);
         });
   });
 
@@ -82,27 +69,25 @@ describe('Subsequent Synchronization', () => {
       source: 2,
     };
     db.addChangesData(create1)
-        .then(() => {
-          return db.addChangesData(create2);
-        })
-        .then(() => {
-          handler({
-            changes: [],
-            requestId: 1,
-            clientIdentity: 1,
-            syncedRevision: 1,
-          }).then((dataToSend) => {
-            expectWrapper(done, () => {
-              expect(dataToSend.changes.length).to.equal(1);
-              expect(dataToSend.changes[0]).to.deep.equal({
-                type: create2.type,
-                obj: create2.obj,
-                key: create2.key,
-                table: create2.table,
-              });
-              done();
-            });
+        .then(() => db.addChangesData(create2))
+        .then(() => handler({
+          changes: [],
+          requestId: 1,
+          clientIdentity: 1,
+          syncedRevision: 1,
+        }))
+        .then((dataToSend) => {
+          expect(dataToSend.changes.length).to.equal(1);
+          expect(dataToSend.changes[0]).to.deep.equal({
+            type: create2.type,
+            obj: create2.obj,
+            key: create2.key,
+            table: create2.table,
           });
+          done();
+        })
+        .catch((e) => {
+          done(e);
         });
   });
 
@@ -124,34 +109,14 @@ describe('Subsequent Synchronization', () => {
       source: 2,
     };
     db.addChangesData(create1)
-      .then(() => {
-        return db.addChangesData(create2);
-      })
-      .then(() => handler({
-        changes: [],
-        requestId: 1,
-        clientIdentity: 1,
-        syncedRevision: 1,
-      })
-      ).then((dataToSend) => {
-        expectWrapper(done, () => {
-          expect(dataToSend.changes.length).to.equal(1);
-          expect(dataToSend.changes[0]).to.deep.equal({
-            type: create2.type,
-            obj: create2.obj,
-            key: create2.key,
-            table: create2.table,
-          });
-        });
-
-        return handler({
+        .then(() => db.addChangesData(create2))
+        .then(() => handler({
           changes: [],
           requestId: 1,
           clientIdentity: 1,
           syncedRevision: 1,
-        });
-      }).then((dataToSend) => {
-        expectWrapper(done, () => {
+        }))
+        .then((dataToSend) => {
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
             type: create2.type,
@@ -159,8 +124,25 @@ describe('Subsequent Synchronization', () => {
             key: create2.key,
             table: create2.table,
           });
+
+          return handler({
+            changes: [],
+            requestId: 1,
+            clientIdentity: 1,
+            syncedRevision: 1,
+          });
+        })
+        .then((dataToSend) => {
+          expect(dataToSend.changes.length).to.equal(1);
+          expect(dataToSend.changes[0]).to.deep.equal({
+            type: create2.type,
+            obj: create2.obj,
+            key: create2.key,
+            table: create2.table,
+          });
+          done();
+        }).catch((e) => {
+          done(e);
         });
-        done();
-      });
   });
 });

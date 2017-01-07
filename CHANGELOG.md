@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [] - Not released
 
 * Allow CORS to be configured
+* Add WebSockets support
 
 ## [2.0.0-beta.1] - 2016-12-27
 
