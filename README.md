@@ -275,7 +275,7 @@ npm test
 
 ## TODO
 
-* cleanup changes table
+* cleanup changes table -> Can only do that after Dexie.Syncable supports the clear flag
 * Add E2E tests
 
 ## Contributing
