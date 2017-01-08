@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * Allow CORS to be configured
 * Add WebSockets support
+* Change revision handling
+  * Each DB changes has its own revision
+  * Don't save a DB revision. Just read the last revision from the changes table
+  * Don't return the DB revision when client gets data. Return the revision of the last change the client receives
+* meta data reading/writing is now async
 
 ## [2.0.0-beta.1] - 2016-12-27
 
