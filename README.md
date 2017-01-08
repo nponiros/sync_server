@@ -191,6 +191,7 @@ This must be the first message sent.
 #### subscribe
 
 This must be the second message sent. It is needed to setup callbacks to inform the client about changes made by other clients.
+You need to wait on the `clientIdentity` response before subscribing to make sure that the server saved the clientIdentity.
 
 * Params: JSON with
   * type: "subscribe"

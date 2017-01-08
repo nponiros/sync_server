@@ -28,6 +28,13 @@
 
     if (resp.type === 'clientIdentity') {
       console.log('Client identity', resp.clientIdentity);
+
+      // Subscribe here to make sure that we have received the clientIdentity
+      console.log('Send subscribe');
+      ws.send(JSON.stringify({
+        type: 'subscribe',
+        syncedRevision,
+      }));
     } else if (resp.type === 'changes') {
       syncedRevision = resp.currentRevision;
       items.push(...resp.changes.map((change) => change.obj.item));
@@ -46,12 +53,6 @@
       console.log('Send clientIdentity');
       ws.send(JSON.stringify({
         type: 'clientIdentity',
-      }));
-
-      console.log('Send subscribe');
-      ws.send(JSON.stringify({
-        type: 'subscribe',
-        syncedRevision,
       }));
     };
 
