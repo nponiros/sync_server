@@ -30,9 +30,16 @@ describe('Socket: Handle client changes', () => {
   const clientIdentity1 = 11;
   const clientIdentity2 = 12;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should get back the given requestId', (done) => {

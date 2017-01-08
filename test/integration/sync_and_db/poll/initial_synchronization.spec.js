@@ -26,9 +26,16 @@ describe('Poll: Initial synchronization', () => {
   let db;
   let handler;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should leave the tables unchanged if no data was sent', (done) => {

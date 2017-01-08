@@ -26,9 +26,16 @@ describe('Poll: Partial client synchronization', () => {
   let db;
   let handler;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should add the partial data to the uncommittedChanges table', (done) => {

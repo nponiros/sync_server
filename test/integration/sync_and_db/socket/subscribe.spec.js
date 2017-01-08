@@ -28,9 +28,16 @@ describe('Socket: subscribe', () => {
   const connID = 1;
   const clientIdentity = 10;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should send back any changes newer than our revision and the current db revision', (done) => {

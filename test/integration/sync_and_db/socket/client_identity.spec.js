@@ -26,9 +26,16 @@ describe('Socket: clientIdentity', () => {
   let handler;
   const connID = 1;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should define a clientIdentity if none was given', (done) => {

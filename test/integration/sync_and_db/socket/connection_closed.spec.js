@@ -27,9 +27,16 @@ describe('Socket: Connection closed', () => {
   const connID = 1;
   const clientIdentity = 10;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should remove the subscribed function and the connection to client ID mapping', (done) => {

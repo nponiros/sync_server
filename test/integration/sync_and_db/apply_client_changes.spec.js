@@ -25,8 +25,15 @@ const logger = {
 describe('applyClientChanges', () => {
   let db;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
+    db.init()
+        .then(() => {
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   describe('CREATE', () => {

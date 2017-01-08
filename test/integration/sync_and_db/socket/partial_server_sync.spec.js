@@ -30,9 +30,16 @@ describe('Socket: Partial server sync', () => {
   const clientIdentity1 = 10;
   const clientIdentity2 = 12;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should send any partial changes in multiple calls', (done) => {

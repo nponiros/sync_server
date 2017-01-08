@@ -26,9 +26,16 @@ describe('Poll: Subsequent Synchronization', () => {
   let db;
   let handler;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should not return server changes to the client when those have the same clientIdentity', (done) => {

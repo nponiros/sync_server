@@ -26,9 +26,16 @@ describe('Poll: Partial server sync', () => {
   let db;
   let handler;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1 });
+    db.init()
+        .then(() => {
+          handler = syncHandler(db, logger, { partialsThreshold: 1 });
+          done();
+        })
+        .catch((e) => {
+          done(e);
+        });
   });
 
   it('should send partial changes', (done) => {
