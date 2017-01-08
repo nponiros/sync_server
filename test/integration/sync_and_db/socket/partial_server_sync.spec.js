@@ -35,7 +35,7 @@ describe('Socket: Partial server sync', () => {
     handler = syncHandler(db, logger, { partialsThreshold: 1 });
   });
 
-  xit('should send any partial changes in multiple calls', (done) => {
+  it('should send any partial changes in multiple calls', (done) => {
     const create1 = {
       rev: 1,
       type: CREATE,
@@ -70,6 +70,8 @@ describe('Socket: Partial server sync', () => {
               table: create1.table,
             }]);
             expect(data.partial).to.equal(true);
+            expect(data.currentRevision).to.equal(create1.rev);
+            expect(handler._clientIDToRevision.get(clientIdentity2)).to.equal(data.currentRevision);
             callCounter = callCounter + 1;
             break;
           }
@@ -81,6 +83,7 @@ describe('Socket: Partial server sync', () => {
               table: create2.table,
             }]);
             expect(data.partial).to.equal(false);
+            expect(data.currentRevision).to.equal(create2.rev);
             done();
             break;
           }

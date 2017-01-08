@@ -68,7 +68,7 @@ describe('Socket: subscribe', () => {
           table: 'foo',
         }]);
         expect(data.partial).to.equal(false);
-        expect(data.currentRevision).to.equal(4);
+        expect(data.currentRevision).to.equal(create2.rev);
         done();
       } catch (e) {
         done(e);
@@ -78,7 +78,7 @@ describe('Socket: subscribe', () => {
     db.addChangesData(create1)
         .then(() => db.addChangesData(create2))
         .then(() => handler.handleInitialization(connID, { clientIdentity }))
-        .then(() => handler.handleSubscribe(connID, { syncedRevision: 0 }, cb))
+        .then(() => handler.handleSubscribe(connID, { syncedRevision: 1 }, cb))
         .catch((e) => {
           done(e);
         });

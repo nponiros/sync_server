@@ -32,7 +32,7 @@ describe('Socket: Handle client changes', () => {
 
   beforeEach(() => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
   });
 
   it('should get back the given requestId', (done) => {
@@ -90,7 +90,7 @@ describe('Socket: Handle client changes', () => {
         });
   });
 
-  it('should trigger get server changes for other connections', (done) => {
+  it('should trigger getServerChanges for other connections', (done) => {
     const create = {
       type: CREATE,
       obj: { foo: 'bar' },

@@ -28,7 +28,7 @@ describe('Poll: Initial synchronization', () => {
 
   beforeEach(() => {
     db = new Db({ inMemoryOnly: true }, logger);
-    handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+    handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
   });
 
   it('should leave the tables unchanged if no data was sent', (done) => {

@@ -38,7 +38,7 @@ describe('applyClientChanges', () => {
         table: 'foo',
       };
       db.addData('foo', 3, {})
-          .then(() => applyClientChanges(db, 0, 1, [create], 1))
+          .then(() => applyClientChanges(db, 0, { rev: 1 }, [create], 1))
           .then(() => db.getData('foo', 1))
           .then((data) => {
             expect(data).to.deep.equal(create.obj);
@@ -57,8 +57,8 @@ describe('applyClientChanges', () => {
         table: 'foo',
       };
       const clientID = 1;
-      const nextRevision = 1;
-      applyClientChanges(db, 0, nextRevision, [create], clientID)
+      const currentRevision = { rev: 1 };
+      applyClientChanges(db, 0, currentRevision, [create], clientID)
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.find({}, (err, data) => {
@@ -72,7 +72,7 @@ describe('applyClientChanges', () => {
           .then((data) => {
             expect(data[0].type).to.equal(CREATE);
             expect(data[0].obj).to.deep.equal(create.obj);
-            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].rev).to.equal(2); // Revision was incremented by 1 compared to the current revision
             expect(data[0].source).to.equal(clientID);
             done();
           })
@@ -91,8 +91,8 @@ describe('applyClientChanges', () => {
         mods: { foo: 'bar' },
       };
       const clientID = 1;
-      const nextRevision = 1;
-      applyClientChanges(db, 0, nextRevision, [update], clientID)
+      const currentRevision = { rev: 1 };
+      applyClientChanges(db, 0, currentRevision, [update], clientID)
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.count({}, (err, count) => {
@@ -120,10 +120,10 @@ describe('applyClientChanges', () => {
         mods: { foo: 'bar' },
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 3, {})
-          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [update], clientID))
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.count({}, (err, count) => {
@@ -151,10 +151,10 @@ describe('applyClientChanges', () => {
         mods: { foo: 'bar' },
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 2, { bar: 'bar' })
-          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [update], clientID))
           .then(() => db.getData('foo', 2))
           .then((data) => {
             expect(data).to.deep.equal({ foo: 'bar', bar: 'bar' });
@@ -173,10 +173,10 @@ describe('applyClientChanges', () => {
         mods: { foo: 'bar' },
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 2, {})
-          .then(() => applyClientChanges(db, 0, nextRevision, [update], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [update], clientID))
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.find({}, (err, data) => {
@@ -191,7 +191,7 @@ describe('applyClientChanges', () => {
             expect(data.length).to.equal(1);
             expect(data[0].type).to.equal(UPDATE);
             expect(data[0].mods).to.deep.equal(update.mods);
-            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].rev).to.equal(2); // Revision was incremented by 1 compared to the current revision
             expect(data[0].source).to.equal(clientID);
             done();
           })
@@ -209,8 +209,8 @@ describe('applyClientChanges', () => {
         key: 2,
       };
       const clientID = 1;
-      const nextRevision = 1;
-      applyClientChanges(db, 0, nextRevision, [remove], clientID)
+      const currentRevision = { rev: 1 };
+      applyClientChanges(db, 0, currentRevision, [remove], clientID)
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.count({}, (err, count) => {
@@ -237,10 +237,10 @@ describe('applyClientChanges', () => {
         key: 2,
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 3, {})
-          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [remove], clientID))
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.count({}, (err, count) => {
@@ -267,10 +267,10 @@ describe('applyClientChanges', () => {
         key: 2,
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 2, { bar: 'bar' })
-          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [remove], clientID))
           .then(() => db.getData('foo', 2))
           .then((data) => {
             expect(data).to.be.null;
@@ -288,10 +288,10 @@ describe('applyClientChanges', () => {
         key: 2,
       };
       const clientID = 1;
-      const nextRevision = 1;
+      const currentRevision = { rev: 1 };
       // Create table
       db.addData('foo', 2, {})
-          .then(() => applyClientChanges(db, 0, nextRevision, [remove], clientID))
+          .then(() => applyClientChanges(db, 0, currentRevision, [remove], clientID))
           .then(() => {
             return new Promise((resolve, reject) => {
               db.changesTable.store.find({}, (err, data) => {
@@ -305,7 +305,7 @@ describe('applyClientChanges', () => {
           .then((data) => {
             expect(data.length).to.equal(1);
             expect(data[0].type).to.equal(DELETE);
-            expect(data[0].rev).to.equal(nextRevision);
+            expect(data[0].rev).to.equal(2); // Revision was incremented by 1 compared to the current revision
             expect(data[0].source).to.equal(clientID);
             done();
           })
