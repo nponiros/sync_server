@@ -22,13 +22,6 @@
     list.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
   }
 
-  /*
-   * Return: JSON object
-   * If the synchronization was successful
-   * success: true
-   * changes: Array<ChangeObj> (The [ChangeObj](#changeobj) is described below)
-   */
-
   function sync() {
     const dataToSend = {
       baseRevision,
