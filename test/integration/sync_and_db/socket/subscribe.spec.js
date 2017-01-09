@@ -90,4 +90,55 @@ describe('Socket: subscribe', () => {
           done(e);
         });
   });
+
+  it('should send back any changes newer than our revision and work with syncedRevision null', (done) => {
+    const create1 = {
+      rev: 1,
+      type: CREATE,
+      obj: { foo: 'bar' },
+      key: 1,
+      table: 'foo',
+    };
+    const create2 = {
+      rev: 2,
+      type: CREATE,
+      obj: { foo: 'baz' },
+      key: 2,
+      table: 'foo',
+    };
+
+    db.meta.revision = 4;
+    function cb({ succeeded, data }) {
+      if (!succeeded) {
+        return done(new Error(data.errorMessage));
+      }
+
+      try {
+        expect(data.changes).to.deep.equal([{
+          type: CREATE,
+          obj: { foo: 'bar' },
+          key: 1,
+          table: 'foo',
+        }, {
+          type: CREATE,
+          obj: { foo: 'baz' },
+          key: 2,
+          table: 'foo',
+        }]);
+        expect(data.partial).to.equal(false);
+        expect(data.currentRevision).to.equal(create2.rev);
+        done();
+      } catch (e) {
+        done(e);
+      }
+    }
+
+    db.addChangesData(create1)
+        .then(() => db.addChangesData(create2))
+        .then(() => handler.handleInitialization(connID, { clientIdentity }))
+        .then(() => handler.handleSubscribe(connID, { syncedRevision: null }, cb))
+        .catch((e) => {
+          done(e);
+        });
+  });
 });

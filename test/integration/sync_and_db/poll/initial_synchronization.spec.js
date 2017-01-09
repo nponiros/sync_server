@@ -39,7 +39,7 @@ describe('Poll: Initial synchronization', () => {
   });
 
   it('should leave the tables unchanged if no data was sent', (done) => {
-    handler({ changes: [], requestId: 1 })
+    handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null })
         .then(() => {
           return new Promise((resolve, reject) => {
             db.changesTable.store.count({}, (err, count) => {
@@ -60,7 +60,7 @@ describe('Poll: Initial synchronization', () => {
   });
 
   it('should not try to send any changes if no changes were made', (done) => {
-    handler({ changes: [], requestId: 1 })
+    handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null })
         .then((dataToSend) => {
           expect(dataToSend.changes).to.deep.equal([]);
           done();
@@ -77,7 +77,7 @@ describe('Poll: Initial synchronization', () => {
       key: 1,
       table: 'foo',
     };
-    handler({ changes: [create], requestId: 1 })
+    handler({ changes: [create], requestId: 1, baseRevision: null, syncedRevision: null })
         .then(() => {
           expect(db.meta.tables).to.deep.equal(['foo']);
 
@@ -123,7 +123,7 @@ describe('Poll: Initial synchronization', () => {
       table: 'foo',
     };
     db.addChangesData(create)
-        .then(() => handler({ changes: [], requestId: 1 }))
+        .then(() => handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null }))
         .then((dataToSend) => {
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
