@@ -39,8 +39,12 @@ describe('Poll: Initial synchronization', () => {
   });
 
   it('should leave the tables unchanged if no data was sent', (done) => {
-    handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null })
-        .then(() => {
+    const request = { changes: [], requestId: 1, baseRevision: null, syncedRevision: null };
+    handler(request)
+        .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           return new Promise((resolve, reject) => {
             db.changesTable.store.count({}, (err, count) => {
               if (err) {
@@ -62,6 +66,9 @@ describe('Poll: Initial synchronization', () => {
   it('should not try to send any changes if no changes were made', (done) => {
     handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes).to.deep.equal([]);
           done();
         })
@@ -78,7 +85,10 @@ describe('Poll: Initial synchronization', () => {
       table: 'foo',
     };
     handler({ changes: [create], requestId: 1, baseRevision: null, syncedRevision: null })
-        .then(() => {
+        .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(db.meta.tables).to.deep.equal(['foo']);
 
           return new Promise((resolve, reject) => {
@@ -125,6 +135,9 @@ describe('Poll: Initial synchronization', () => {
     db.addChangesData(create)
         .then(() => handler({ changes: [], requestId: 1, baseRevision: null, syncedRevision: null }))
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
             type: create.type,

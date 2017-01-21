@@ -40,6 +40,9 @@ describe('Poll: clientIdentity', () => {
   it('should define a clientIdentity if none was given', (done) => {
     handler({ changes: [], requestId: 1 })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.clientIdentity).to.equal(db.meta.nextClientID - 1);
           done();
         })
@@ -52,6 +55,9 @@ describe('Poll: clientIdentity', () => {
     const currentClientID = db.meta.nextClientID;
     handler({ changes: [], requestId: 1, clientIdentity: 10 })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(db.meta.nextClientID).to.equal(currentClientID);
           expect(dataToSend.clientIdentity).to.equal(10);
           done();

@@ -58,6 +58,9 @@ describe('Poll: Partial server sync', () => {
         .then(() => db.addChangesData(create2))
         .then(() => handler({ requestId: 1, changes: [], clientIdentity: 1 }))
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes).to.deep.equal([{
             key: create1.key,
             type: create1.type,
@@ -76,6 +79,9 @@ describe('Poll: Partial server sync', () => {
           });
         })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes).to.deep.equal([{
             key: create2.key,
             type: create2.type,

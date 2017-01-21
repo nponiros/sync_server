@@ -30,7 +30,7 @@ describe('Poll: Partial client synchronization', () => {
     db = new Db({ inMemoryOnly: true }, logger);
     db.init()
         .then(() => {
-          handler = syncHandler(db, logger, { partialsThreshold: 1000 });
+          handler = syncHandler(db, logger, { partialsThreshold: 1000 }, { rev: 0 });
           done();
         })
         .catch((e) => {
@@ -46,7 +46,12 @@ describe('Poll: Partial client synchronization', () => {
       table: 'foo',
     };
     handler({ changes: [create], partial: true })
-        .then((dataToSend) => db.uncommittedChanges.get(dataToSend.clientIdentity))
+        .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
+          return db.uncommittedChanges.get(dataToSend.clientIdentity)
+        })
         .then((uncommittedChanges) => {
           expect(uncommittedChanges.changes).to.deep.equal([create]);
           done();
@@ -73,6 +78,9 @@ after we received partial = false`, (done) => {
     };
     handler({ changes: [create1], partial: true })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           clientIdentity = dataToSend.clientIdentity;
           return handler({
             changes: [create2],
@@ -80,7 +88,12 @@ after we received partial = false`, (done) => {
             clientIdentity,
           });
         })
-        .then(() => db.uncommittedChanges.get(clientIdentity))
+        .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
+          return db.uncommittedChanges.get(clientIdentity)
+        })
         .then((uncommittedChanges) => {
           expect(uncommittedChanges.changes).to.deep.equal([]);
           return db.getData('foo', 1);

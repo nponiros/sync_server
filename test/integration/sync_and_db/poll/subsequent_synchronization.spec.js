@@ -50,6 +50,9 @@ describe('Poll: Subsequent Synchronization', () => {
     db.addChangesData(create)
         .then(() => handler({ changes: [], requestId: 1, clientIdentity: 1 }))
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes.length).to.equal(0);
           done();
         })
@@ -84,6 +87,9 @@ describe('Poll: Subsequent Synchronization', () => {
           syncedRevision: 1,
         }))
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
             type: create2.type,
@@ -124,6 +130,9 @@ describe('Poll: Subsequent Synchronization', () => {
           syncedRevision: 1,
         }))
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
             type: create2.type,
@@ -140,6 +149,9 @@ describe('Poll: Subsequent Synchronization', () => {
           });
         })
         .then((dataToSend) => {
+          if (!dataToSend.success) {
+            throw new Error(dataToSend.errorMessage);
+          }
           expect(dataToSend.changes.length).to.equal(1);
           expect(dataToSend.changes[0]).to.deep.equal({
             type: create2.type,
