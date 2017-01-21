@@ -89,6 +89,9 @@ describe('Poll: Initial synchronization', () => {
           if (!dataToSend.success) {
             throw new Error(dataToSend.errorMessage);
           }
+          // We received no server changes but we got the latest db.revision
+          // for the next sync call
+          expect(dataToSend.currentRevision).to.equal(1);
           expect(db.meta.tables).to.deep.equal(['foo']);
 
           return new Promise((resolve, reject) => {

@@ -89,6 +89,7 @@ describe('Poll: Partial server sync', () => {
             table: create2.table,
           }]);
           expect(dataToSend.partial).to.equal(false);
+          expect(dataToSend.currentRevision).to.equal(create2.rev);
           done();
         })
         .catch((e) => {

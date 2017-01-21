@@ -34,7 +34,7 @@ describe('Socket: Partial server sync', () => {
     db = new Db({ inMemoryOnly: true }, logger);
     db.init()
         .then(() => {
-          handler = syncHandler(db, logger, { partialsThreshold: 1 });
+          handler = syncHandler(db, logger, { partialsThreshold: 1 }, { rev: 0 });
           done();
         })
         .catch((e) => {
@@ -44,14 +44,12 @@ describe('Socket: Partial server sync', () => {
 
   it('should send any partial changes in multiple calls', (done) => {
     const create1 = {
-      rev: 1,
       type: CREATE,
       obj: { foo: 'bar' },
       key: 1,
       table: 'foo',
     };
     const create2 = {
-      rev: 2,
       type: CREATE,
       obj: { foo: 'baz' },
       key: 2,
@@ -61,36 +59,36 @@ describe('Socket: Partial server sync', () => {
     let callCounter = 0;
 
     function cb({ data, succeeded }) {
+      const thisData = Object.assign({}, data);
       if (!succeeded) {
         return done(new Error(data.errorMessage));
       }
-
       try {
         switch (callCounter) {
           // Call during subscribe
-          case 0: callCounter = callCounter + 1; break;
-          case 1: {
-            expect(data.changes).to.deep.equal([{
-              key: create1.key,
-              type: create1.type,
-              obj: create1.obj,
-              table: create1.table,
-            }]);
-            expect(data.partial).to.equal(true);
-            expect(data.currentRevision).to.equal(create1.rev);
-            expect(handler._clientIDToRevision.get(clientIdentity2)).to.equal(data.currentRevision);
+          case 0: {
+            // Equal current db revision
+            expect(data.currentRevision).to.equal(0);
             callCounter = callCounter + 1;
             break;
           }
+          case 1: {
+            callCounter = callCounter + 1;
+            // Make sure we have 1 change. We don't know which change as we don't know the order
+            // in which the changes are written to the changesTable
+            expect(data.changes.length).to.equal(1);
+            expect(thisData.partial).to.equal(true);
+            expect(data.currentRevision).to.equal(1); // First change has rev 1
+            expect(handler._clientIDToRevision.get(clientIdentity2)).to.equal(data.currentRevision);
+            break;
+          }
           case 2: {
-            expect(data.changes).to.deep.equal([{
-              key: create2.key,
-              type: create2.type,
-              obj: create2.obj,
-              table: create2.table,
-            }]);
+            // Make sure we have 1 change. We don't know which change as we don't know the order
+            // in which the changes are written to the changesTable
+            expect(data.changes.length).to.equal(1);
             expect(data.partial).to.equal(false);
-            expect(data.currentRevision).to.equal(create2.rev);
+            expect(data.currentRevision).to.equal(2); // Second change has rev 2
+            expect(handler._clientIDToRevision.get(clientIdentity2)).to.equal(data.currentRevision);
             done();
             break;
           }
@@ -102,12 +100,10 @@ describe('Socket: Partial server sync', () => {
 
     handler.handleInitialization(connID1, { clientIdentity: clientIdentity1 })
         .then(() => handler.handleInitialization(connID2, { clientIdentity: clientIdentity2 }))
-        .then(() => handler.handleSubscribe(connID1, { syncedRevision: 0 }, () => {
+        .then(() => handler.handleSubscribe(connID1, { syncedRevision: 2 }, () => {
         }))
         .then(() => handler.handleSubscribe(connID2, { syncedRevision: 0 }, cb))
-        .then(() => db.addChangesData(create1))
-        .then(() => db.addChangesData(create2))
-        .then(() => handler.handleClientChanges(connID1, { changes: [] }))
+        .then(() => handler.handleClientChanges(connID1, { changes: [create1, create2] }))
         .catch((e) => {
           done(e);
         });
