@@ -50,7 +50,7 @@ describe('Poll: Partial client synchronization', () => {
           if (!dataToSend.success) {
             throw new Error(dataToSend.errorMessage);
           }
-          return db.uncommittedChanges.get(dataToSend.clientIdentity)
+          return db.uncommittedChanges.get(dataToSend.clientIdentity);
         })
         .then((uncommittedChanges) => {
           expect(uncommittedChanges.changes).to.deep.equal([create]);
@@ -92,7 +92,7 @@ after we received partial = false`, (done) => {
           if (!dataToSend.success) {
             throw new Error(dataToSend.errorMessage);
           }
-          return db.uncommittedChanges.get(clientIdentity)
+          return db.uncommittedChanges.get(clientIdentity);
         })
         .then((uncommittedChanges) => {
           expect(uncommittedChanges.changes).to.deep.equal([]);
