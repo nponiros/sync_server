@@ -11,18 +11,18 @@
     "url": "https://github.com/nponiros/sync_server.git"
   },
   "dependencies": {
-    "body-parser": "1.15.2",
+    "body-parser": "1.16.0",
     "cors": "2.8.1",
     "express": "4.14.0",
     "minimist": "1.2.0",
     "nedb": "1.8.0",
     "nodejs-websocket": "1.7.1",
-    "winston": "2.3.0",
-    "yargs": "6.5.0"
+    "winston": "2.3.1",
+    "yargs": "6.6.0"
   },
   "devDependencies": {
     "chakram": "1.5.0",
-    "eslint": "3.12.2",
+    "eslint": "3.14.0",
     "eslint-config-standard": "6.2.1",
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-standard": "2.0.1",
