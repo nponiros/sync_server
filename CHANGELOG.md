@@ -8,8 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Change revision handling
   * Each DB changes has its own revision
   * Don't save a DB revision. Just read the last revision from the changes table
-  * Don't return the DB revision when client gets data. Return the revision of the last change the client receives
+  * Don't return the DB revision when client gets data. Return the revision of the last change the client receives or the current db revision if there are no data for the client
 * meta data reading/writing is now async
+* Write stack trace into error log
+* Update dependencies
 
 ## [2.0.0-beta.1] - 2016-12-27
 
