@@ -90,7 +90,7 @@ The server supports 4 different protocols: `http`, `https`, `ws` and `wss`. The 
 
 ### Configuring HTTPS
 
-In order to use HTTPS you need to set the `protocol` to `"https"` and add paths for the certificate in the `https` object. There is support for `key` and `cert` or for `pfx`. For example:
+In order to use HTTPS you need to set the `protocol` to `"https"` and add paths for the certificate in the `https` object. The attributes `key` and `cert` or for `pfx` are required. For example:
 
 ```json
 {
@@ -104,7 +104,7 @@ In order to use HTTPS you need to set the `protocol` to `"https"` and add paths 
 }
 ```
 
-The files must be in the same directory as the server's config file.
+The files must be in the same directory as the server's config file. You can also specify other options allowed by Node.js for a https server.
 
 ### Configuring WebSockets (WS)
 
@@ -112,7 +112,7 @@ In order to use WebSockets you need to set the `protocol` to `"ws"`.
 
 ### Configuring Secure WebSockets (WSS)
 
-In order to use WSS you need to set the `protocol` to `"wss"` and add paths for the certificate in the `wss` object. There is support for `key` and `cert` or for `pfx`. For example:
+In order to use WSS you need to set the `protocol` to `"wss"` and add paths for the certificate in the `wss` object. The attributes `key` and `cert` or for `pfx` are required. For example:
 
 ```json
 {
@@ -126,7 +126,7 @@ In order to use WSS you need to set the `protocol` to `"wss"` and add paths for 
 }
 ```
 
-The files must be in the same directory as the server's config file.
+The files must be in the same directory as the server's config file. You can also specify other options allowed by Node.js for a tls server and options allowed by nodejs-websocket.
 
 ## API for the poll pattern
 

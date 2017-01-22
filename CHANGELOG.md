@@ -1,6 +1,10 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [] - Not released
+
+* Allow more https/wss options than just the certificates
+
 ## [2.0.0-beta.2] - 2017-01-21
 
 * Allow CORS to be configured
