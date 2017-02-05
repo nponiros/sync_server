@@ -1,9 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [] - Not released
+## [2.0.0-beta.3] - 2017-02-05
 
 * Allow more https/wss options than just the certificates
+* Bug fix: during poll synchronization a /check call shouldn't increment the next client version
+* Fix https://github.com/nponiros/sync\_server/issues/8
 
 ## [2.0.0-beta.2] - 2017-01-21
 
