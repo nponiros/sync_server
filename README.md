@@ -25,7 +25,7 @@ The `init` action must be executed in an empty directory which will later be use
 You can start the server with:
 
 ```bash
-sync-server --path INIT/DIRECTORY/PATH
+sync-server start --path INIT/DIRECTORY/PATH
 ```
 
 The `--path` flag must be given the path to the directory in which `init` was called.
