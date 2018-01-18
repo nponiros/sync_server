@@ -38,7 +38,7 @@ These settings are written in a file called `config.json` in the directory in wh
 
 | Setting name      | Value                   | Description                                                                                                    |
 | ----------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
-| connector         | 'NeDB'                  | The database used to store the data. Currently only [NeDB](https://github.com/louischatriot/nedb) is supported |
+| connector         | 'NeDB', 'MongoDB'       | The database used to store the data. [NeDB](https://github.com/louischatriot/nedb), [MongoDB](https://www.mongodb.com) |
 | opts              | {}                      | Options for the database. These depend on the selected connector                                               |
 
 __NeDB Options__
@@ -50,6 +50,14 @@ The `sync-server` supports the following NeDB options:
 * corruptAlertThreshold
 
 The [NeDB README](https://github.com/louischatriot/nedb#creatingloading-a-database) contains more information about these options.
+
+__MongoDB Options__
+
+The `sync-server` supports the following MongoDB options:
+
+* url (Connection [URL](https://docs.mongodb.com/manual/reference/connection-string/) for MongoDB)
+* dbName (Name of the database)
+* inMemoryOnly (used only for the file with the meta data)
 
 #### logging
 
