@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.0-beta.6] - 2018-03-11
 
-* Fix WSS support #12
+* Fix WSS support [#12](#12)
 * Update vulnerable dependencies
 
 ## [2.0.0-beta.4] - 2017-02-05
