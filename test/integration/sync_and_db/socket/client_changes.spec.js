@@ -42,6 +42,11 @@ describe('Socket: Handle client changes', () => {
         });
   });
 
+  afterEach(() => {
+    handler.handleConnectionClosed(connID1);
+    handler.handleConnectionClosed(connID2);
+  });
+
   it('should get back the given requestId', (done) => {
     const requestId = 0;
     handler.handleInitialization(connID1, { clientIdentity: clientIdentity1 })
@@ -106,21 +111,21 @@ describe('Socket: Handle client changes', () => {
     };
 
     let callCounter1 = 0;
+    let callCounter2 = 0;
 
-    function cb1() {
-      // Make sure that the client that caused the changes gets not triggered
+    function cb1({ succeeded, data }) {
+      // Make sure the client that caused the changes gets triggered, but with an empty changeset
       if (callCounter1 === 1) {
-        try {
-          expect(false).to.equal(true);
-        } catch (e) {
-          done(e);
+        expect(data.changes.length).to.equal(0);
+        expect(data.partial).to.equal(false);
+        callCounter1 = callCounter1 + 1;
+        if (callCounter2 > 1) {
+          done();
         }
       } else {
         callCounter1 = callCounter1 + 1;
       }
     }
-
-    let callCounter2 = 0;
 
     function cb2({ succeeded, data }) {
       if (!succeeded) {
@@ -136,7 +141,10 @@ describe('Socket: Handle client changes', () => {
             table: create.table,
           }]);
           expect(data.partial).to.equal(false);
-          done();
+          callCounter2 = callCounter2 + 1;
+          if (callCounter2 > 1) {
+            done();
+          }
         } catch (e) {
           done(e);
         }
